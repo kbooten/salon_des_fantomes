@@ -21,7 +21,6 @@ class Dialogue:
     self._start_prompt()
     self._create_start_question()
 
-
   def _get_start_char(self):
     try:
       self.current_thinker = [t for t in self.all_characters if t.name=="Socrates"][0]
@@ -106,7 +105,7 @@ class Dialogue:
     asking %s \
     a throughtful philosophical question about %s\'s immedately previous utterance. This next utterance should be a question of 20 to 50 or so words long.\
     \n\n%s said: "\
-#     %s' % (thinker,previous_thinker,previous_thinker,thinker,prefix),
+    %s' % (thinker,previous_thinker,previous_thinker,thinker,prefix),
     "prefix":prefix}
 
 
@@ -158,12 +157,14 @@ class Dialogue:
     fake_stub = self._continue_secret_prompt()
     self.current_text = self.current_text.rstrip('"') ## prep to add more
     self.current_text+=" "
-    self.current_text+=" ~ "
+    #self.current_text+=" ~ "
     self.current_text+=gpt_interface.gpt3_from_prompt(self.current_text+fake_stub['prompt'])
 
 
   def _possibly_elaborate(self):
     while True:
+      if self.current_thinker.name=="player": ## don't elaborate when player
+        break
       if (random.random()<self.current_thinker.chattiness and self.direct_question_asked==False):
         self.elaborate()
       else:
@@ -172,12 +173,17 @@ class Dialogue:
 
   def generate_next_line(self):
     self._next_thinker()
-    #fake_stub = prompt_prelude + self._generate_secret_prompt()
-    fake_stub = self._generate_secret_prompt()
-    real_stub = '\n\n%s said: "' % self.current_thinker.name
-    if fake_stub["prefix"]!=None:
-      real_stub+=fake_stub["prefix"]
-    self.current_text+=real_stub+gpt_interface.gpt3_from_prompt(self.current_text+fake_stub['prompt'])
+    if self.current_thinker.name=="player":
+      print(self.current_text)
+      player_text = input(">")
+      self.current_text+='\n\nKyle: "%s"' % player_text
+    else:
+      #fake_stub = prompt_prelude + self._generate_secret_prompt()
+      fake_stub = self._generate_secret_prompt()
+      real_stub = '\n\n%s said: "' % self.current_thinker.name
+      if fake_stub["prefix"]!=None:
+        real_stub+=fake_stub["prefix"]
+      self.current_text+=real_stub+gpt_interface.gpt3_from_prompt(self.current_text+fake_stub['prompt'])
 
 
   def next(self):

@@ -1,4 +1,3 @@
-
 import persons
 characters = persons.get_people()
 

@@ -14,6 +14,8 @@ chars = characters.characters
 
 def get_people():
     people = []
+    player = Person("player")
+    people.append(player)
     for c in chars.keys():
         person = Person(c)
         person.words = chars[c]['words']
