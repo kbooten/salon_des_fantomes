@@ -1,9 +1,14 @@
+import random
+
 class Person:
 
   def __init__(self,name):
     self.name = name
-    words = []
-    memories = []
+    self.beverage = None
+    self.psychotropics = {
+            ##"function"
+        }
+    self.continue_drink_probability = random.random()
 
   def __repr__(self):
     return "%s(%s)" % (self.__class__,self.name)

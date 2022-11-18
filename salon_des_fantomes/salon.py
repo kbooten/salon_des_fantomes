@@ -4,7 +4,9 @@ characters = persons.get_people()
 from data import questions
 questions = questions.questions
 
-from dialogue import Dialogue as dialogue
+from dialogue import Dialogue
+from description import DescriptionAdder
+
 
 class Salon:
 
@@ -14,14 +16,11 @@ class Salon:
 
   def new_dialogue(self):
     next_question = self.questions.pop()
-    current_dialogue = dialogue(characters,next_question)
+    description_adder = DescriptionAdder(characters)
+    current_dialogue = Dialogue(characters,next_question,description_adder)
     current_dialogue.generate()
-    print(current_dialogue.current_text)
-    self.make_memories(current_dialogue)
-    self.completed_dialogues.append(current_dialogue)
-
-  def make_memories(self,dialogue):
-    print("need to make memories")
+    print(current_dialogue.current_text_plus_description)
+    self.completed_dialogues.append(current_dialogue) ## not just text?
 
 salon = Salon(questions)
 

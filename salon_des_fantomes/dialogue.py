@@ -2,13 +2,16 @@ import random,time,re
 
 import gpt_interface
 
+
 class Dialogue:
 
-  def __init__(self,characters,question):
+  def __init__(self,characters,question,description_adder):
     self.question = question
+    self.description_adder = description_adder
     self.temperature=0.9
     self.max_tokens=70
     self.current_text = ""#prompt_prelude
+    self.current_text_plus_description = ""#
     self.previous_thinker = None
     # self.current_thinker = [t for t in characters if t.name=="Socrates"][0]
     self.current_discourse_move = "ask a question"
@@ -186,9 +189,22 @@ class Dialogue:
       self.current_text+=real_stub+gpt_interface.gpt3_from_prompt(self.current_text+fake_stub['prompt'])
 
 
+  def _possibly_psychotrope(self):
+    print(self.current_thinker)
+    for i in self.current_thinker.psychotropics:
+      print(i)
+      print("HERE APPLY PSYCHOTROPIC TRANSFORMATION")
+
+  def _possibly_describe(self):
+    self.description_adder.possible_action()
+    self.current_text_plus_description = self.current_text + self.description_adder.flush_text()
+
   def next(self):
     self.generate_next_line()
     self._possibly_elaborate()
+    self._clean
+    self._possibly_psychotrope()
+    self._possibly_describe()
 
 
   def _clean(self):
@@ -196,7 +212,6 @@ class Dialogue:
 
 
   def generate(self):
-    for i in range(15):
+    for i in range(3):
       self.next()
       time.sleep(1)
-    self._clean()
