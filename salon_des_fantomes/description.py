@@ -1,5 +1,5 @@
 import random
-from copy import deepcopy
+from copy import copy
 
 import persons
 all_characters = persons.get_people()
@@ -7,29 +7,33 @@ all_characters = persons.get_people()
 from psychotropics.odd_parenthetical import add_odd_parenthetical
 from psychotropics.doubt import add_doubt
 
+from cfgs import *
+
 drinks2psycho = {
-    # "water":None,
-    # "port":None,
-    # "calvados":None,
-    # "chablis":None,
-    # "sherry":None,
-    # "amontillado":None,
-    # "madeira":None,
-    # "dry vermouth":None,
-    # "sweet vermouth":None,
-    # "scotch":None,
-    # "brandy":None,
+    "water":None,
+    "port":None,
+    "calvados":None,
+    "chablis":None,
+    "sherry":None,
+    "amontillado":None,
+    "madeira":None,
+    "dry vermouth":None,
+    "sweet vermouth":None,
+    "scotch":None,
+    "brandy":None,
     "1961 Pétrus":{
                     "function":add_odd_parenthetical,
-                    "taste":["like a muddy mixtape","like a few highlighters","like a bismuth spoon","like a signal splitter"],
+                    #"taste":["like a muddy mixtape","like a few highlighters","like a bismuth spoon","like a signal splitter"],
                     "prob":0.9,
                     "step":0.02,
+                    "cfg":cfg2,
                     },
     "1950 Château Lafleur":{
                     "function":add_doubt,
-                    "taste":["like rabbit breath","like leather water","rainy","like a memory of chalk","like a perfect ravine"],
+                    #"taste":["like rabbit breath","like leather water","rainy","like a memory of chalk","like a perfect ravine"],
                     "prob":0.9,
                     "step":0.3,
+                    "cfg":cfg1,
                     },
 }
 
@@ -55,7 +59,9 @@ class DescriptionAdder:
     def prepare_drink_statement(self,char,bev,psy=False,taste=None):
         text = "\n\n  **%s took a sip of %s.**\n" % (char.name,bev)
         if psy==True:
-            text += "  **It tasted like %s.**\n" % random.choice(taste)
+            #text += "  **It tasted like %s.**\n" % random.choice(taste)
+            next_taste = drinks2psycho[bev]['cfg'].my_next() ## tick through the cfg
+            text += "  **It tasted like %s.**\n" % next_taste#random.choice(taste)
             if random.random()<.23:
                 text += random.choice(["  **Was it supposed to taste like this?**","  **And it looked cloudy.**"])+"\n"
         self.prepared_text += text ### adds text
@@ -67,11 +73,12 @@ class DescriptionAdder:
         print("<<")
         if drinks2psycho[bev]!=None: ### if has psychotropic character
             if bev not in char.psychotropics: ## first sip, add to dictionary
-                char.psychotropics[bev] = deepcopy(drinks2psycho[bev])
+                char.psychotropics[bev] = copy(drinks2psycho[bev])
             else: ## keep sipping
                 char.psychotropics[bev]["prob"]+=char.psychotropics[bev]["step"] ## increase by step
-            taste = drinks2psycho[bev]['taste']
-            self.prepare_drink_statement(char,bev,psy=True,taste=taste)
+            #taste = drinks2psycho[bev]['taste']
+            #self.prepare_drink_statement(char,bev,psy=True,taste=taste)
+            self.prepare_drink_statement(char,bev,psy=True)
         else:
             self.prepare_drink_statement(char,bev)
 
