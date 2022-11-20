@@ -8,27 +8,27 @@ from psychotropics.odd_parenthetical import add_odd_parenthetical
 from psychotropics.doubt import add_doubt
 
 drinks2psycho = {
-    "water":None,
-    "port":None,
-    "calvados":None,
-    "chablis":None,
-    "sherry":None,
-    "amontillado":None,
-    "madeira":None,
-    "dry vermouth":None,
-    "sweet vermouth":None,
-    "scotch":None,
-    "brandy":None,
+    # "water":None,
+    # "port":None,
+    # "calvados":None,
+    # "chablis":None,
+    # "sherry":None,
+    # "amontillado":None,
+    # "madeira":None,
+    # "dry vermouth":None,
+    # "sweet vermouth":None,
+    # "scotch":None,
+    # "brandy":None,
     "1961 Pétrus":{
                     "function":add_odd_parenthetical,
-                    "taste":["like birds"],
-                    "prob":0.1,
+                    "taste":["like a muddy mixtape","like a few highlighters","like a bismuth spoon","like a signal splitter"],
+                    "prob":0.9,
                     "step":0.02,
                     },
     "1950 Château Lafleur":{
                     "function":add_doubt,
-                    "taste":["like rabbit breath"],
-                    "prob":0.1,
+                    "taste":["like rabbit breath","like leather water","rainy","like a memory of chalk","like a perfect ravine"],
+                    "prob":0.9,
                     "step":0.3,
                     },
 }
@@ -53,11 +53,11 @@ class DescriptionAdder:
             print(char,char.beverage)
 
     def prepare_drink_statement(self,char,bev,psy=False,taste=None):
-        text = "%s took a sip of %s.\n" % (char.name,bev)
+        text = "\n\n  **%s took a sip of %s.**\n" % (char.name,bev)
         if psy==True:
-            text += "It tasted like %s.\n" % random.choice(taste)
+            text += "  **It tasted like %s.**\n" % random.choice(taste)
             if random.random()<.23:
-                text += random.choice(["Was it supposed to taste like this?","And it looked cloudy."])+"\n"
+                text += random.choice(["  **Was it supposed to taste like this?**","  **And it looked cloudy.**"])+"\n"
         self.prepared_text += text ### adds text
 
     def make_character_drink(self,char):

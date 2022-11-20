@@ -2,6 +2,10 @@ import random,time,re
 
 import gpt_interface
 
+import psytransform
+
+import raw_dialogue_parsing as rdp
+
 
 class Dialogue:
 
@@ -11,7 +15,6 @@ class Dialogue:
     self.temperature=0.9
     self.max_tokens=70
     self.current_text = ""#prompt_prelude
-    self.current_text_plus_description = ""#
     self.previous_thinker = None
     # self.current_thinker = [t for t in characters if t.name=="Socrates"][0]
     self.current_discourse_move = "ask a question"
@@ -161,7 +164,7 @@ class Dialogue:
     self.current_text = self.current_text.rstrip('"') ## prep to add more
     self.current_text+=" "
     #self.current_text+=" ~ "
-    self.current_text+=gpt_interface.gpt3_from_prompt(self.current_text+fake_stub['prompt'])
+    self.current_text+=gpt_interface.gpt3_from_prompt(rdp.remove_comments(self.current_text)+fake_stub['prompt'])
 
 
   def _possibly_elaborate(self):
@@ -186,23 +189,29 @@ class Dialogue:
       real_stub = '\n\n%s said: "' % self.current_thinker.name
       if fake_stub["prefix"]!=None:
         real_stub+=fake_stub["prefix"]
-      self.current_text+=real_stub+gpt_interface.gpt3_from_prompt(self.current_text+fake_stub['prompt'])
+      self.current_text+=real_stub+gpt_interface.gpt3_from_prompt(rdp.remove_comments(self.current_text)+fake_stub['prompt'])
 
 
   def _possibly_psychotrope(self):
     print(self.current_thinker)
-    for i in self.current_thinker.psychotropics:
-      print(i)
-      print("HERE APPLY PSYCHOTROPIC TRANSFORMATION")
+    print(self.current_thinker.psychotropics)
+    for psy in self.current_thinker.psychotropics:
+      print("attempting transform")
+      print(psy)
+      last_utterance = rdp.excerpt_last_utterance_and_transform(self.current_text)
+      transformed = psytransform.transform_text(last_utterance,self.current_thinker.psychotropics[psy]['function'],self.current_thinker.psychotropics[psy]['prob'])
+      self.current_text = rdp.replace_last_instance(self.current_text,last_utterance,transformed)
+
 
   def _possibly_describe(self):
     self.description_adder.possible_action()
-    self.current_text_plus_description = self.current_text + self.description_adder.flush_text()
+    self.current_text = self.current_text + self.description_adder.flush_text()
+
 
   def next(self):
     self.generate_next_line()
     self._possibly_elaborate()
-    self._clean
+    self._clean()
     self._possibly_psychotrope()
     self._possibly_describe()
 
@@ -212,6 +221,6 @@ class Dialogue:
 
 
   def generate(self):
-    for i in range(3):
+    for i in range(6):
       self.next()
       time.sleep(1)

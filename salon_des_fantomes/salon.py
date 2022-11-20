@@ -19,7 +19,7 @@ class Salon:
     description_adder = DescriptionAdder(characters)
     current_dialogue = Dialogue(characters,next_question,description_adder)
     current_dialogue.generate()
-    print(current_dialogue.current_text_plus_description)
+    print(current_dialogue.current_text)
     self.completed_dialogues.append(current_dialogue) ## not just text?
 
 salon = Salon(questions)
