@@ -6,6 +6,8 @@ import psytransform
 
 import raw_dialogue_parsing as rdp
 
+with open('data/art.txt','r') as f:
+  artworks = [a.rstrip("\n") for a in f.readlines()]
 
 class Dialogue:
 
@@ -120,13 +122,7 @@ class Dialogue:
     thinker = self.current_thinker.name
     thinker_stub = random.choice(self.current_thinker.words)
     previous_thinker = self.previous_thinker.name
-    artwork = random.choice([
-        "Las Meninas by Velásquez",
-        "Dürer's woodcut The Four Horsemen of the Apocalypse",
-        "Berthe Morisot's painting of a Woman at Her Toilette",
-        "Paul Klee's Twittering Machine",
-
-    ])
+    artwork = random.choice(artworks)
     return {"prompt":'\n\nWrite the next utterance the conversation by %s, \
     describing %s \
     and connecting it to the previous statement by %s and giving careful philosophical reasons and specific rationale. End by closing the quotation mark. \
@@ -134,7 +130,7 @@ class Dialogue:
     \n\n%s said: \
     "What you are saying, %s, \
     reminds me of this artwork above us, %s. In this' % (thinker,artwork,previous_thinker,previous_thinker,thinker,previous_thinker,artwork),
-    "prefix":"What you are saying, %s, reminds me of this artwork above us, %s.  In this" % (previous_thinker,artwork)}
+    "prefix":"What you are saying, %s, reminds me of this artwork just behind us, %s.  In this" % (previous_thinker,artwork)}
 
 
   def _continue_secret_prompt(self):
@@ -206,6 +202,7 @@ class Dialogue:
   def _possibly_describe(self):
     self.description_adder.possible_action()
     self.current_text+=self.description_adder.flush_text()
+
 
   def add_toxicology_report(self):
     self.current_text+=self.description_adder.blood_test_text()
