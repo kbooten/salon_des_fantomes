@@ -27,6 +27,7 @@ drinks2psycho = {
                     "prob":0.9,
                     "step":0.02,
                     "cfg":cfg2,
+                    "chem":"bisephontinol-3",
                     },
     "1950 Château Lafleur":{
                     "function":add_doubt,
@@ -34,8 +35,10 @@ drinks2psycho = {
                     "prob":0.9,
                     "step":0.3,
                     "cfg":cfg1,
+                    "chem":"3-hydroxaform-butane",
                     },
 }
+
 
 class DescriptionAdder:
 
@@ -45,6 +48,19 @@ class DescriptionAdder:
         self.characters = characters
         self.set_character_drinks()
         self.prepared_text = ""
+
+    def blood_test_text(self):
+        text = "  *--[T O X I C O L O G Y  R E P O R T]*\n"
+        for char in self.characters:
+            text+="  *----%s:*\n" % char.name
+            if len(char.psychotropics)==0:
+                text+="  *-------within normal range*\n"
+            else:
+                for psy in char.psychotropics:
+                    chem = drinks2psycho[psy]['chem']
+                    permillion = int(drinks2psycho[psy]['prob'] * 10)
+                    text+="  *-------%s: %d parts per million*\n" % (chem,permillion)
+        return text
 
     def set_character_drinks(self):
         ## choose drink, maybe sticking with previous drink
@@ -63,7 +79,12 @@ class DescriptionAdder:
             next_taste = drinks2psycho[bev]['cfg'].my_next() ## tick through the cfg
             text += "  **It tasted like %s.**\n" % next_taste#random.choice(taste)
             if random.random()<.23:
-                text += random.choice(["  **Was it supposed to taste like this?**","  **And it looked cloudy.**"])+"\n"
+                text += random.choice([
+                                    "  **Was it supposed to taste like this?**",
+                                    "  **And it looked cloudy.**",
+                                    "  **An unfamiliar pulse in the cerebelum.**",
+                                    "  **A flicker of nausea, easy to ignore.**",
+                                    "  **Immediate lightheadedness. Not entirely pleasant.**"])+"\n"
         self.prepared_text += text ### adds text
 
     def make_character_drink(self,char):
@@ -97,6 +118,8 @@ def main():
     for i in range(100):
         d.possible_action()
         print(d.flush_text())
+    print(d.blood_test_text())
+
 
 if __name__ == '__main__':
   main()

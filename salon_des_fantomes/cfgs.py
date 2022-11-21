@@ -1,4 +1,3 @@
-
 from nltk.parse.generate import generate, demo_grammar
 from nltk import CFG
 

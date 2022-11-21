@@ -4,6 +4,7 @@ class Person:
 
   def __init__(self,name):
     self.name = name
+    self.is_player = False
     self.beverage = None
     self.psychotropics = {
             ##"function"
@@ -19,7 +20,8 @@ chars = characters.characters
 
 def get_people():
     people = []
-    player = Person("player")
+    player = Person("Kyle")
+    player.is_player = True
     people.append(player)
     for c in chars.keys():
         person = Person(c)

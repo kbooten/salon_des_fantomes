@@ -169,7 +169,7 @@ class Dialogue:
 
   def _possibly_elaborate(self):
     while True:
-      if self.current_thinker.name=="player": ## don't elaborate when player
+      if self.current_thinker.is_player==True: ## don't elaborate when player
         break
       if (random.random()<self.current_thinker.chattiness and self.direct_question_asked==False):
         self.elaborate()
@@ -179,10 +179,10 @@ class Dialogue:
 
   def generate_next_line(self):
     self._next_thinker()
-    if self.current_thinker.name=="player":
+    if self.current_thinker.is_player==True:
       print(self.current_text)
       player_text = input(">")
-      self.current_text+='\n\nKyle: "%s"' % player_text
+      self.current_text+='\n\n%s: "%s"' % (self.current_thinker.name,player_text)
     else:
       #fake_stub = prompt_prelude + self._generate_secret_prompt()
       fake_stub = self._generate_secret_prompt()
@@ -205,7 +205,10 @@ class Dialogue:
 
   def _possibly_describe(self):
     self.description_adder.possible_action()
-    self.current_text = self.current_text + self.description_adder.flush_text()
+    self.current_text+=self.description_adder.flush_text()
+
+  def add_toxicology_report(self):
+    self.current_text+=self.description_adder.blood_test_text()
 
 
   def next(self):
@@ -220,7 +223,9 @@ class Dialogue:
     self.current_text = re.sub(r" said: ",": ",self.current_text)
 
 
-  def generate(self):
-    for i in range(6):
+  def generate(self,n=6,toxicology_needed=True):
+    for i in range(n):
       self.next()
       time.sleep(1)
+    if toxicology_needed==True:
+      self.add_toxicology_report()
