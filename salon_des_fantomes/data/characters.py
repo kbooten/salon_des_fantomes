@@ -9,6 +9,7 @@ characters = {
 	},
 
 	"Frantz Fanon":{
+		"quotes":"fanon.txt",
 		"chattiness":.2,
 		"curiosity":.3,
 		"words":['colonial', 'postcolonial', 'decolonization', 'neocolonialism', 'empire', 'imperialism', 'capitalism', 'class', 'race', 'gender', 'sexuality', 'otherness', 'alterity', 'marginalization', 'exclusion', 'oppression', 'domination', 'subjugation', 'resistance', 'struggle', 'liberation', 'freedom', 'authenticity', 'identity', 'self', 'consciousness', 'mental', 'psychiatry', 'psychology', 'psychoanalysis', 'decentering', 'colonizer', 'colonized', 'colony', 'natives', 'settlers', 'migrants', 'refugees', 'displacement', 'diaspora'],
@@ -26,6 +27,7 @@ characters = {
 	},
 
 	"Freud":{
+		"quotes":"freud.txt",
 		"chattiness":.7,
 		"curiosity":.2,
 		"words":["id", "ego", "superego", "anal", "oral", "phallic", "castration", "penis", "vagina", "libido", "fetish", "transference", "countertransference", "repression", "resistance", "neurosis", "psychosis", "hysteria", "paranoia", "obsession", "compulsion", "dream", "displacement", "symbol", "sublimation", "projection", "rationalization", "reaction formation"],
@@ -34,6 +36,7 @@ characters = {
 	},
 
 	"Simone Weil":{
+		"quotes":"weil.txt",
 		"chattiness":.6,
 		"curiosity":.8,
 		"words":["grace", "love", "beauty", "suffering", "divine", "eternal", "poverty", "truth", "goodness", "labor", "liberation", "justice", "equality", "solidarity", "compassion", "exclusion", " mystery", " God", " prayer", " contemplation", " suffering", " hope", " faith", " charity", " humility", " obedience", " simplicity", " self-denial"],
@@ -42,6 +45,7 @@ characters = {
 	},
 
 	"Mao":{
+		"quotes":"mao.txt",	
 		"chattiness":.2,
 		"curiosity":.2,
 		"words":["rifle","rifles","cadre","anti-rightist","big-character poster","capitalist roader","rustication","rusticated","peasant", "class struggle", "proletariat", "bourgeoisie", "comrade", "imperialism", "feudalism", "land", "exploitation", "socialism", "communism", "capitalism", "dictatorship of the proletariat", " Chairman Mao", "Great Leap Forward", "Cultural Revolution", "Red Guards", "People's Commune", "Little Red Book"],

@@ -24,6 +24,7 @@ def get_ideas(loc):
     with open(pref+loc,'r') as f:
         ideas = f.readlines()
     ideas = [i.rstrip("\n") for i in ideas]
+    ideas = [i for i in ideas if len(i)>0] ## in case extra lines 
     return ideas
 
 def get_people():

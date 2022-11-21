@@ -9,7 +9,9 @@ import raw_dialogue_parsing as rdp
 with open('data/art.txt','r') as f:
   artworks = [a.rstrip("\n") for a in f.readlines()]
 
+
 class Dialogue:
+
 
   def __init__(self,characters,question,description_adder):
     self.question = question
@@ -28,6 +30,7 @@ class Dialogue:
     self._get_start_char()
     self._start_prompt()
     self._create_start_question()
+
 
   def _get_start_char(self):
     try:
@@ -67,6 +70,9 @@ class Dialogue:
 
 
   def _generate_secret_prompt(self):
+    """
+    the function that actually decides what kind of utterance is next
+    """
     if self.first_statement_needed==True: ## if socrates has asked a question
       if random.random()<.4:  ## maybe don't immediately switch off this need
         self.first_statement_needed = False ## switch it off
@@ -75,11 +81,13 @@ class Dialogue:
       self.direct_question_asked=False ## switch off this need
       return self._standard_secret_prompt() ## standard response will do for response to questions
     else:
-      if random.random()<self.current_thinker.curiosity:
+      if random.random()<self.current_thinker.curiosity: ## QUESTION
           self.direct_question_asked = True # set variable so will know to return to questioned person
           return self._question_secret_prompt()
-      elif random.random()<.1: # rarely talk about art
+      elif random.random()<.1: # ART (rarely)
         return self._art_secret_prompt()
+      elif random.random()<.9 and self.current_thinker.ideas!=None: ## IDEA 
+        return self._refer_to_quote_or_idea_secret_prompt()
       else: ## how likely to just go with standard prompt
         return self._standard_secret_prompt()
 
@@ -94,6 +102,27 @@ class Dialogue:
                               "My","Your","My dear","Let's","One","A","Here's one way of putting it","To be precise,","At the risk","Now","For"])
     else:
       prefix = ""
+    return {"prompt":'\n\nWrite the next utterance the conversation by %s\ \
+    in %s\'s style, \
+    responding to the immediately previous statement by %s, giving detailed philosophical reasons and specific rationale, agreeing or disagreeing. This next line of dialogue should be 15 to 50 words long, \
+    refer to a word or phrase from the previous statement by %s \
+    and include the word "%s". End by closing the quotation mark. \
+    \n\n%s said: "%s' % (thinker,thinker,previous_thinker,previous_thinker,thinker_stub,thinker,prefix),
+    "prefix":prefix}
+
+
+  def _refer_to_quote_or_idea_secret_prompt(self):
+    print('refer to quote/idea')
+    thinker = self.current_thinker.name
+    thinker_stub = random.choice(self.current_thinker.words)
+    previous_thinker = self.previous_thinker.name
+    print("ideas:")
+    print(self.current_thinker.ideas)
+    quote_or_idea = random.choice(self.current_thinker.ideas)
+    if quote_or_idea.startswith('"'): # quote
+      prefix = 'What you say reminds me of something I once wrote: "%s"' % quote_or_idea
+    else: ## idea
+      prefix = "As I have always argued, %s" % quote_or_idea
     return {"prompt":'\n\nWrite the next utterance the conversation by %s\ \
     in %s\'s style, \
     responding to the immediately previous statement by %s, giving detailed philosophical reasons and specific rationale, agreeing or disagreeing. This next line of dialogue should be 15 to 50 words long, \
@@ -133,7 +162,7 @@ class Dialogue:
     "prefix":"What you are saying, %s, reminds me of this artwork just behind us, %s.  In this" % (previous_thinker,artwork)}
 
 
-  def _continue_secret_prompt(self):
+  def _elaborate_secret_prompt(self):
     print('elaborate')
     thinker = self.current_thinker.name
     thinker_stub = random.choice(self.current_thinker.words)
@@ -156,7 +185,7 @@ class Dialogue:
 
 
   def elaborate(self):
-    fake_stub = self._continue_secret_prompt()
+    fake_stub = self._elaborate_secret_prompt()
     self.current_text = self.current_text.rstrip('"') ## prep to add more
     self.current_text+=" "
     #self.current_text+=" ~ "
@@ -182,6 +211,7 @@ class Dialogue:
     else:
       #fake_stub = prompt_prelude + self._generate_secret_prompt()
       fake_stub = self._generate_secret_prompt()
+      print(fake_stub)
       real_stub = '\n\n%s said: "' % self.current_thinker.name
       if fake_stub["prefix"]!=None:
         real_stub+=fake_stub["prefix"]
