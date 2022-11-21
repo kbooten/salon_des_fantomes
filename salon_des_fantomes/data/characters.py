@@ -17,6 +17,7 @@ characters = {
 	},
 
 	"Heidegger":{
+		"quotes":"heidegger.txt",
 		"chattiness":.7,
 		"curiosity":.05,
 		"words":["being","dasein","authenticity","ontology","phenomenology","hermeneutics","existence","temporality","theology","nihilism","ecstasy","angst","care"," fallenness","resoluteness","eigentlichkeit","solitude","death","letting-be","truth"," Being-towards-death","authentic","inauthentic","world","earth","clearing","enframing","equipmentality"," ready-to-hand","present-at-hand","thrownness","facticity","aletheia","unconcealment","authentic self-hood"," disclosedness","disclosure","hiddenness","oblivion","pre-Socratics","Greek","ontic","ontological"],
