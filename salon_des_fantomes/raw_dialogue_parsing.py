@@ -17,6 +17,11 @@ def remove_comments(raw_dialogue_text,despace=True):
 		text = re.sub(r'\n{3,}',"\n\n",text)
 	return text
 
+def get_author_utterance_tuples(raw_dialogue_text):
+	utterances = re.findall(r'([A-Z]\w+)(?:\: \")(.+)(?:\"$)',raw_dialogue_text,flags=re.M)
+	return utterances
+
+
 
 def main():
   test_text = """
@@ -57,6 +62,8 @@ Freud took a sip of sherry.
   print(replace_last_instance(test_text,last_utterance,"TEST TEST TEST"))
   print("testing remove comments")
   print(remove_comments(test_text))
+  print("testing gettng author utterance tuples")
+  print(get_author_utterance_tuples(test_text))
 
 if __name__ == '__main__':
   main()
