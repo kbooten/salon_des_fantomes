@@ -5,7 +5,10 @@ with open('data/art.txt','r') as f:
   artworks = [a.rstrip("\n") for a in f.readlines()]
 
 with open('data/quotes_and_ideas/player.txt','r') as f:
-    player_ideas = [i.rstrip("/n") for i in f.readlines()]
+    player_ideas = [c for c in [i.rstrip("/n") for i in f.readlines()] if len(c)>1]
+
+with open('data/quotes_and_ideas/player_concepts.txt','r') as f:
+    theoretical_concepts = [c for c in [i.rstrip("/n") for i in f.readlines()] if len(c)>1]
 
 import random
 
@@ -64,13 +67,21 @@ class QuestionAsker:
     def COMMENT_with_player_idea(self):
         last_author,last_utterance =  self.author_utterance_tuples[-1]
         idea = random.choice(player_ideas)
-        return "Comment on what %s has said in light of your suspicion that %s." % (last_author,idea)
+        return "Comment on what %s has said in light of the idea that %s." % (last_author,idea)
+
+    def COMMENT_with_theory_word(self):
+        concepts = random.choice(theoretical_concepts)
+        last_author,last_utterance =  self.author_utterance_tuples[-1]
+        idea = random.choice(player_ideas)
+        return "Comment on what %s has said in light of the concept of %s." % (last_author,concept)
+
 
     def COMMENT_on_last_text_random_sentence(self):
         last_author,last_utterance =  self.author_utterance_tuples[-1]
         sentences = sent_tokenize(last_utterance)
         #
         provocations = [
+            "Why not offer a summary."
             "Provide another piece of evidence.",
             "Reflect on this in light of personal experience.",
             "Reflect on this in light of what you know about history.",

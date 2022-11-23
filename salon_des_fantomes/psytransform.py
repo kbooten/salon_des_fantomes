@@ -12,11 +12,6 @@ def transform_text(text,transformation,probability_of_transformation,max=3):
         print(text)
     return text
 
-# def apply_all_transformations(text,transformation_probability_tuples):
-#     for transformation,probability_of_transformation in transformation_probability_tuples:
-#         text = _transform_text(text,transformation,probability_of_transformation)
-#     return text
-
 def main():
     from psychotropics.odd_parenthetical import add_odd_parenthetical
     test_text = "This is just a test text. I'm just trying to see if this function works."

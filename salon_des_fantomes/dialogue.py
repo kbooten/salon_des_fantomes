@@ -65,7 +65,7 @@ class Dialogue:
 
   def _create_start_question(self):
     question = '%s said: "%s"' % (self.current_thinker.name,self.question)
-    self.current_text = question
+    self.current_text += question
 
 
   def _next_thinker(self):
