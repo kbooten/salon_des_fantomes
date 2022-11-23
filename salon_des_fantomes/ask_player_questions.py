@@ -10,7 +10,7 @@ with open('data/quotes_and_ideas/player.txt','r') as f:
 import random
 
 from nltk.tokenize import sent_tokenize,word_tokenize
-from nltk import chunk,pos_tag,RegexpParser
+from nltk import pos_tag,RegexpParser
 
 from nltk.corpus import stopwords
 stops = stopwords.words('english')

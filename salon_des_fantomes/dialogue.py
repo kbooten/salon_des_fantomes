@@ -10,6 +10,17 @@ with open('data/art.txt','r') as f:
   artworks = [a.rstrip("\n") for a in f.readlines()]
 
 
+## using signal for timeout on user input
+import signal
+#
+class AlarmException(Exception): # https://stackoverflow.com/q/27013127, https://stackoverflow.com/a/27014090, https://stackoverflow.com/a/494273
+    pass
+#
+def signal_handler(signum, frame):
+  raise AlarmException("user took to long")
+#
+signal.signal(signal.SIGALRM, signal_handler)
+
 class Dialogue:
 
 
@@ -206,8 +217,13 @@ class Dialogue:
     self._next_thinker()
     if self.current_thinker.is_player==True:
       print(self.current_text)
-      player_text = input(">")
-      self.current_text+='\n\n%s: "%s"' % (self.current_thinker.name,player_text)
+      signal.alarm(10)
+      try:
+        player_text = input(">")
+        self.current_text+='\n\n%s: "%s"' % (self.current_thinker.name,player_text)
+      except:
+        pass
+      signal.alarm(0)
     else:
       #fake_stub = prompt_prelude + self._generate_secret_prompt()
       fake_stub = self._generate_secret_prompt()

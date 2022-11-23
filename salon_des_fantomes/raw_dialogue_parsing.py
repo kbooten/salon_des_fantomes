@@ -21,8 +21,6 @@ def get_author_utterance_tuples(raw_dialogue_text):
 	utterances = re.findall(r'([A-Z]\w+)(?:\: \")(.+)(?:\"$)',raw_dialogue_text,flags=re.M)
 	return utterances
 
-
-
 def main():
   test_text = """
 
