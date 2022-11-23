@@ -115,8 +115,8 @@ class QuestionAsker:
         perspectives = ["Marxist","normie lib","nihilist","feminist","accelerationist","ironic","Romantic","good natured","imaginative"] 
         for p in perspectives:
             prov = "Reply from a %s perspective." % p
-            prov.replace("a i","an i") ## should use regex
-            prov.replace("a a","an e")
+            prov = prov.replace("a i","an i") ## should use regex
+            prov = prov.replace("a a","an e")
             provocations.append(prov)
         return random.choice(provocations)
 
