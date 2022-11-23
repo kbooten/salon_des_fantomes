@@ -81,7 +81,7 @@ class QuestionAsker:
         sentences = sent_tokenize(last_utterance)
         #
         provocations = [
-            "Why not offer a summary."
+            "Why not offer a summary to make sure you grasp this point.",
             "Provide another piece of evidence.",
             "Reflect on this in light of personal experience.",
             "Reflect on this in light of what you know about history.",
@@ -112,7 +112,7 @@ class QuestionAsker:
 
     def COMMENT_general(self):
         provocations = []
-        perspectives = ["Marxist","classical liberal","nihilist","feminist","accelerationist","ironic","common sense","good natured","imaginative"] 
+        perspectives = ["Marxist","normie lib","nihilist","feminist","accelerationist","ironic","Romantic","good natured","imaginative"] 
         for p in perspectives:
             prov = "Reply from a %s perspective." % p
             prov.replace("a i","an i") ## should use regex
@@ -121,7 +121,7 @@ class QuestionAsker:
         return random.choice(provocations)
 
 
-    def comment(self):
+    def question(self):
         c = 0
         comment = None
         while comment == None:
@@ -170,7 +170,7 @@ Freud took a sip of sherry.
 """
     qa = QuestionAsker()
     qa.ingest_text(test_text)
-    print(qa.comment())
+    print(qa.question())
 
 
 if __name__ == '__main__':

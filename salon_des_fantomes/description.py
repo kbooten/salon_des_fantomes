@@ -50,7 +50,7 @@ class DescriptionAdder:
         self.prepared_text = ""
 
     def blood_test_text(self):
-        text = "  *--[T O X I C O L O G Y  R E P O R T]*\n"
+        text = "\n\n\n  *--[T O X I C O L O G Y  R E P O R T]*\n"
         for char in self.characters:
             text+="  *----%s:*\n" % char.name
             if len(char.psychotropics)==0:
@@ -73,15 +73,15 @@ class DescriptionAdder:
             print(char,char.beverage)
 
     def prepare_drink_statement(self,char,bev,psy=False,taste=None):
-        text = "\n\n  **%s took a sip of %s.**\n" % (char.name,bev)
+        text = "\n\n  **%s takes a sip of %s.**" % (char.name,bev)
         if psy==True:
             #text += "  **It tasted like %s.**\n" % random.choice(taste)
             next_taste = drinks2psycho[bev]['cfg'].my_next() ## tick through the cfg
-            text += "  **It tasted like %s.**\n" % next_taste#random.choice(taste)
+            text += "  **It tastes like %s.**" % next_taste#random.choice(taste)
             if random.random()<.23:
                 text += random.choice([
                                     "  **Was it supposed to taste like this?**",
-                                    "  **And it looked cloudy.**",
+                                    "  **And it was cloudy.**",
                                     "  **An unfamiliar pulse in the cerebelum.**",
                                     "  **A flicker of nausea, easy to ignore.**",
                                     "  **Immediate lightheadedness. Not entirely pleasant.**"])+"\n"

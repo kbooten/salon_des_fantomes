@@ -21,6 +21,10 @@ def signal_handler(signum, frame):
 #
 signal.signal(signal.SIGALRM, signal_handler)
 
+
+from ask_player_questions import QuestionAsker
+qa = QuestionAsker()
+
 class Dialogue:
 
 
@@ -64,7 +68,7 @@ class Dialogue:
 
 
   def _create_start_question(self):
-    question = '%s said: "%s"' % (self.current_thinker.name,self.question)
+    question = '%s: "%s"' % (self.current_thinker.name,self.question)
     self.current_text += question
 
 
@@ -118,7 +122,7 @@ class Dialogue:
     responding to the immediately previous statement by %s, giving detailed philosophical reasons and specific rationale, agreeing or disagreeing. This next line of dialogue should be 15 to 50 words long, \
     refer to a word or phrase from the previous statement by %s \
     and include the word "%s". End by closing the quotation mark. \
-    \n\n%s said: "%s' % (thinker,thinker,previous_thinker,previous_thinker,thinker_stub,thinker,prefix),
+    \n\n%s: "%s' % (thinker,thinker,previous_thinker,previous_thinker,thinker_stub,thinker,prefix),
     "prefix":prefix}
 
 
@@ -139,7 +143,7 @@ class Dialogue:
     responding to the immediately previous statement by %s, giving detailed philosophical reasons and specific rationale, agreeing or disagreeing. This next line of dialogue should be 15 to 50 words long, \
     refer to a word or phrase from the previous statement by %s \
     and include the word "%s". End by closing the quotation mark. \
-    \n\n%s said: "%s' % (thinker,thinker,previous_thinker,previous_thinker,thinker_stub,thinker,prefix),
+    \n\n%s: "%s' % (thinker,thinker,previous_thinker,previous_thinker,thinker_stub,thinker,prefix),
     "prefix":prefix}
 
 
@@ -152,7 +156,7 @@ class Dialogue:
     return {"prompt":'\n\nWrite the next utterance the conversation by %s, \
     asking %s \
     a throughtful philosophical question about %s\'s immedately previous utterance. This next utterance should be a question of 20 to 50 or so words long.\
-    \n\n%s said: "\
+    \n\n%s: "\
     %s' % (thinker,previous_thinker,previous_thinker,thinker,prefix),
     "prefix":prefix}
 
@@ -167,7 +171,7 @@ class Dialogue:
     describing %s \
     and connecting it to the previous statement by %s and giving careful philosophical reasons and specific rationale. End by closing the quotation mark. \
     Be sure to refer to a specific word or idea from %s\'s previous line of dialogue. 50 to 100 words. \
-    \n\n%s said: \
+    \n\n%s: \
     "What you are saying, %s, \
     reminds me of this artwork above us, %s. In this' % (thinker,artwork,previous_thinker,previous_thinker,thinker,previous_thinker,artwork),
     "prefix":"What you are saying, %s, reminds me of this artwork just behind us, %s.  In this" % (previous_thinker,artwork)}
@@ -217,18 +221,29 @@ class Dialogue:
     self._next_thinker()
     if self.current_thinker.is_player==True:
       print(self.current_text)
-      signal.alarm(10)
+      # prepare question using QuestionAsker
+      qa.ingest_text(self.current_text)
+      a_question = qa.question()
+      # set signal to timeout
+      signal.alarm(10) 
       try:
-        player_text = input(">")
+        socrates_question = '\n\nSocrates: "%s, %s"' % (self.current_thinker.name,a_question)
+        player_text = input("%s\n>" % socrates_question)
+        signal.alarm(0) ## reset as soon as possible
+        self.current_text+='\n\nSocrates: "%s, %s"' % (self.current_thinker.name,a_question)
         self.current_text+='\n\n%s: "%s"' % (self.current_thinker.name,player_text)
       except:
-        pass
-      signal.alarm(0)
+        signal.alarm(0) ## reset as soon as possible
+        self.current_text+='\n\n  **Socrates cranes his neck to look at you.**'
+        self.current_text+='\n\nSocrates: "%s, %s"' % ("Reader",a_question)
+        self.current_text+='\n\n  **...**\n  **..**.\n  **...**'
+        self.current_text+='\n\n  **After an awkward interval, Socrates is rebuffed by your silence and turns back around.**'
+        self.current_text+='\n\n  **For your own benefit, take a moment to write down your answer in the lines below**:\n  **___________________________**\n  **___________________________**\n  **___________________________**'
     else:
       #fake_stub = prompt_prelude + self._generate_secret_prompt()
       fake_stub = self._generate_secret_prompt()
       print(fake_stub)
-      real_stub = '\n\n%s said: "' % self.current_thinker.name
+      real_stub = '\n\n%s: "' % self.current_thinker.name
       if fake_stub["prefix"]!=None:
         real_stub+=fake_stub["prefix"]
       self.current_text+=real_stub+gpt_interface.gpt3_from_prompt(rdp.remove_comments(self.current_text)+fake_stub['prompt'])
@@ -253,18 +268,11 @@ class Dialogue:
   def add_toxicology_report(self):
     self.current_text+=self.description_adder.blood_test_text()
 
-
   def next(self):
     self.generate_next_line()
     self._possibly_elaborate()
-    self._clean()
     self._possibly_psychotrope()
     self._possibly_describe()
-
-
-  def _clean(self):
-    self.current_text = re.sub(r" said: ",": ",self.current_text)
-
 
   def generate(self,n=6,toxicology_needed=True):
     for i in range(n):
