@@ -268,13 +268,15 @@ class Dialogue:
   def add_toxicology_report(self):
     self.current_text+=self.description_adder.blood_test_text()
 
+
   def next(self):
     self.generate_next_line()
     self._possibly_elaborate()
     self._possibly_psychotrope()
     self._possibly_describe()
 
-  def generate(self,n=6,toxicology_needed=True):
+
+  def generate(self,n=3,toxicology_needed=True):
     for i in range(n):
       self.next()
       time.sleep(1)
