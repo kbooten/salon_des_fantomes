@@ -36,8 +36,6 @@ class Dialogue:
     self.current_text = ""#prompt_prelude
     self.previous_thinker = None
     # self.current_thinker = [t for t in characters if t.name=="Socrates"][0]
-    self.current_discourse_move = "ask a question"
-    self.person_to_discourse_moves = {}
     self.direct_question_asked = False
     self.first_statement_needed = True
     #self.suffix = '."'
@@ -62,7 +60,7 @@ class Dialogue:
         chars_string+=c.name+", "
       else:
         chars_string+="and "+c.name
-    p = "The philosophical salon continues.\n\nA group---%s---has gathered in one corner of the room, lounging on sofas." % chars_string
+    p = "**The philosophical salon continues. A group---%s---has gathered in one corner of the room, lounging on sofas.**" % chars_string
     p+="\n\n\n"
     self.current_text+=p
 
@@ -269,16 +267,50 @@ class Dialogue:
     self.current_text+=self.description_adder.blood_test_text()
 
 
+  def _heal(self,broken):
+    prompt = "In a few words, complete the following sentence in the style of %s: \n%s" % broken
+    healing_text = gpt_interface.gpt3_from_prompt(broken)
+    healing_text = healing_text.rstrip("\n ") ## in case padded
+    if healing_text.endswith('"')==False: ## add ending quote if it doesn't have it
+      healing_text+='"'
+    self.current_text+=healing_text
+
+
+  def _test_and_maybe_heal_ending(self):
+    """
+    check for text that wasn't completed by gpt
+    if it wasn't (no trailing quote), add some text
+    """
+    broken = rdp.test_broken_utterance(self.current_text)
+    if broken!=None: ## if parser found broken last dialogue
+      print('heal')
+      self._heal(broken)
+
+
+  def _remove_trailing_whitespace(self):
+    self.current_text == rdp.remove_trailing_whitespace(self.current_text)
+
+
+
+
+
   def next(self):
     self.generate_next_line()
+    self._remove_trailing_whitespace()
     self._possibly_elaborate()
+    self._test_and_maybe_heal_ending()
     self._possibly_psychotrope()
     self._possibly_describe()
+    self._maybe_end()
 
 
   def generate(self,n=3,toxicology_needed=True):
     for i in range(n):
       self.next()
       time.sleep(1)
+    if self.direct_question_asked==True:
+      print("one more turn answer questions")
+      self.next()
     if toxicology_needed==True:
       self.add_toxicology_report()
+

@@ -1,9 +1,22 @@
 import re
 
-def excerpt_last_utterance_and_transform(raw_dialogue_text):
+def excerpt_last_utterance(raw_dialogue_text):
+    """
+    gets the last thing someone said, which must be surrounded by quotes
+    """
     utterances = re.findall(r'(?:\: \")(.+)(?:\"$)',raw_dialogue_text,flags=re.M)
     return utterances[-1]
 
+def test_broken_utterance(raw_dialogue_text):
+  """
+  return None if the last utterance isn't broken (has ending quote, a sign that GPT3 completed its thought.
+  return a string, the text to be finished, if it is broken,
+  """
+  broken = re.search(r'([A-Z]\w+)(?:\: \")(.+[^\"])$',raw_dialogue_text)
+  if broken==None: ## no regex match
+    return None
+  else:
+    return broken.group(0)
 
 def replace_last_instance(raw_dialogue_text,to_replace,replacement):
 	"""
@@ -20,6 +33,12 @@ def remove_comments(raw_dialogue_text,despace=True):
 def get_author_utterance_tuples(raw_dialogue_text):
 	utterances = re.findall(r'([A-Z]\w+)(?:\: \")(.+)(?:\"$)',raw_dialogue_text,flags=re.M)
 	return utterances
+
+# def get_last_bit_of_text(raw_dialogue_text,n=3):
+#   return utterances
+
+def remove_trailing_whitespace(raw_dialogue_text):
+  return re.sub(r'\s+$','',raw_dialogue_text)
 
 def main():
   test_text = """
