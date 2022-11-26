@@ -60,7 +60,7 @@ class Dialogue:
         chars_string+=c.name+", "
       else:
         chars_string+="and "+c.name
-    p = "**The philosophical salon continues. A group---%s---has gathered in one corner of the room, lounging on sofas.**" % chars_string
+    p = "  **The philosophical salon continues. A group---%s---has gathered in one corner of the room, lounging on sofas.**" % chars_string
     p+="\n\n\n"
     self.current_text+=p
 
@@ -202,7 +202,7 @@ class Dialogue:
     self.current_text = self.current_text.rstrip('"') ## prep to add more
     self.current_text+=" "
     #self.current_text+=" ~ "
-    self.current_text+=gpt_interface.gpt3_from_prompt(rdp.remove_comments(self.current_text)+fake_stub['prompt'])
+    self.current_text+=gpt_interface.gpt3_from_prompt(rdp.decomment_and_snip(self.current_text)+fake_stub['prompt'])
 
 
   def _possibly_elaborate(self):
@@ -234,7 +234,7 @@ class Dialogue:
         signal.alarm(0) ## reset as soon as possible
         self.current_text+='\n\n  **Socrates cranes his neck to look at you.**'
         self.current_text+='\n\nSocrates: "%s, %s"' % ("Reader",a_question)
-        self.current_text+='\n\n  **...**\n  **..**.\n  **...**'
+        self.current_text+='\n\n  **...**\n  **...**.\n  **...**'
         self.current_text+='\n\n  **After an awkward interval, Socrates is rebuffed by your silence and turns back around.**'
         self.current_text+='\n\n  **For your own benefit, take a moment to write down your answer in the lines below**:\n  **___________________________**\n  **___________________________**\n  **___________________________**'
     else:
@@ -244,7 +244,7 @@ class Dialogue:
       real_stub = '\n\n%s: "' % self.current_thinker.name
       if fake_stub["prefix"]!=None:
         real_stub+=fake_stub["prefix"]
-      self.current_text+=real_stub+gpt_interface.gpt3_from_prompt(rdp.remove_comments(self.current_text)+fake_stub['prompt'])
+      self.current_text+=real_stub+gpt_interface.gpt3_from_prompt(rdp.decomment_and_snip(self.current_text)+fake_stub['prompt'])
 
 
   def _possibly_psychotrope(self):

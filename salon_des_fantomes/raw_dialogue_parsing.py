@@ -34,11 +34,32 @@ def get_author_utterance_tuples(raw_dialogue_text):
 	utterances = re.findall(r'([A-Z]\w+)(?:\: \")(.+)(?:\"$)',raw_dialogue_text,flags=re.M)
 	return utterances
 
-# def get_last_bit_of_text(raw_dialogue_text,n=3):
-#   return utterances
+def get_last_bit_of_text(raw_dialogue_text,n=3):
+  """
+  returns the last n turns of dialogue
+  does this by using a regex to get the indices of "Socrates:" and "Mao:" etc. 
+  """
+  start_indices_of_utterances = [m.start(0) for m in re.finditer(r'^[A-Z]\w+:',raw_dialogue_text,flags=re.M)] 
+  print(start_indices_of_utterances)
+  last_n = start_indices_of_utterances[-n:]
+  print(last_n)
+  n_from_last = last_n[0]
+  return raw_dialogue_text[n_from_last:] 
 
 def remove_trailing_whitespace(raw_dialogue_text):
   return re.sub(r'\s+$','',raw_dialogue_text)
+
+def decomment_and_snip(raw_dialogue_text,n=3,clean_up=True):
+  """
+  just a combination of get_last_bit_of_text and remove_comments
+  """
+  decommented = remove_comments(raw_dialogue_text)
+  decommented_and_snipped = get_last_bit_of_text(decommented,n=3)
+  if clean_up==True:
+    decommented_and_snipped = decommented_and_snipped.rstrip("\n ")
+  return decommented_and_snipped
+
+
 
 def main():
   test_text = """
@@ -69,18 +90,22 @@ Freud: "Here, it seems that you are saying two things: first, that the proletari
   **Frantz Fanon took a sip of port.**
 
 
-Freud took a sip of sherry.
+  **Freud took a sip of sherry.**
   """
   print(test_text)
-  print("excerpting last utterance:")
-  last_utterance = excerpt_last_utterance_and_transform(test_text)
+  print(">>excerpting last utterance:")
+  last_utterance = excerpt_last_utterance(test_text)
   print(last_utterance)
-  print("testing replacing last utterance:")
+  print(">>testing replacing last utterance:")
   print(replace_last_instance(test_text,last_utterance,"TEST TEST TEST"))
-  print("testing remove comments")
+  print(">>testing remove comments")
   print(remove_comments(test_text))
-  print("testing gettng author utterance tuples")
+  print(">>testing getting author utterance tuples")
   print(get_author_utterance_tuples(test_text))
+  print('>>testing sampling text')
+  print(get_last_bit_of_text(test_text))
+  print('>>testing decomment_and_snip')
+  print(decomment_and_snip(test_text))
 
 if __name__ == '__main__':
   main()
