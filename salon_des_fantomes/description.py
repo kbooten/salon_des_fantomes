@@ -28,6 +28,7 @@ drinks2psycho = {
                     "step":0.02,
                     "cfg":cfg2,
                     "chem":"bisephontinol-3",
+                    'after_wordcount':1,#0000,
                     },
     "1950 Château Lafleur":{
                     "function":add_doubt,
@@ -36,18 +37,24 @@ drinks2psycho = {
                     "step":0.3,
                     "cfg":cfg1,
                     "chem":"3-hydroxaform-butane",
+                    'after_wordcount':1,#30000,
                     },
 }
 
 
+starting_drinks = {key:val for key,val in drinks2psycho.items() if val==None} ## don't start with poison drink
+later_drinks = {key:val for key,val in drinks2psycho.items() if val!=None} ## don't start with poison drink
+
+
 class DescriptionAdder:
 
-    def __init__(self,characters):
+    def __init__(self,characters,possible_drinks):
         self.drink_prob = .9
         self.possible_statement = ""
         self.characters = characters
-        self.set_character_drinks()
         self.prepared_text = ""
+        self.possible_drinks = possible_drinks
+        self.set_character_drinks()
 
     def blood_test_text(self):
         text = "\n\n\n  *--[T O X I C O L O G Y  R E P O R T]*\n"
@@ -66,7 +73,7 @@ class DescriptionAdder:
         ## choose drink, maybe sticking with previous drink
         for char in self.characters:
             if char.beverage==None: ## 
-                char.beverage = random.choice(list(drinks2psycho))
+                char.beverage = random.choice(list(self.possible_drinks))
             else: 
                 if random.random()<char.continue_drink_probability: ## possibly change drink
                     char.beverage = random.choice(list(drinks2psycho))
@@ -114,7 +121,7 @@ class DescriptionAdder:
             self.make_character_drink(char)         
 
 def main():
-    d = DescriptionAdder(all_characters)
+    d = DescriptionAdder(all_characters,drinks2psycho)
     for i in range(100):
         d.possible_action()
         print(d.flush_text())

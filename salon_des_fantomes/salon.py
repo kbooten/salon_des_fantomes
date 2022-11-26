@@ -5,7 +5,7 @@ from data import questions
 questions = questions.questions
 
 from dialogue import Dialogue
-from description import DescriptionAdder
+from description import DescriptionAdder,starting_drinks,later_drinks
 
 import random
 
@@ -35,6 +35,9 @@ class Salon:
     ## saving output
     self.file_prefix = "output/output"
     self.output_file = self.get_file_name()
+    ## adding drinks
+    self.current_drinks = starting_drinks
+    self.later_drinks = later_drinks
 
   def get_file_name(self):
     y,mo,d,h,min = time.localtime()[:5] # 
@@ -69,17 +72,37 @@ class Salon:
   def new_dialogue(self):
     next_question = self.questions.pop()
     subset_of_characters = self.get_subset_of_characters()
-    description_adder = DescriptionAdder(subset_of_characters)
+    description_adder = DescriptionAdder(subset_of_characters,self.current_drinks)
     current_dialogue = Dialogue(characters,next_question,description_adder)
     current_dialogue.generate()
     print(current_dialogue.current_text)
     self.write_output(current_dialogue.current_text)
     print("%d words" % self.get_rough_word_count())
 
+
+  def maybe_add_psychotropic_drink(self):
+    print(">")
+    print(self.current_drinks)
+    print(self.later_drinks)
+    rough_word_count = self.get_rough_word_count()
+    keys_to_delete = [] ## keep track of what is added
+    for drink in self.later_drinks:
+      if rough_word_count>self.later_drinks[drink]['after_wordcount']:
+        self.current_drinks.update({drink:self.later_drinks[drink]})
+        print("adding %s" % drink)
+        print(self.current_drinks)
+        keys_to_delete.append(drink)
+    for del_drink in keys_to_delete: ## remove them from the list of addables
+      del self.later_drinks[del_drink]
+    print("<")
+    print(self.current_drinks)
+    print(self.later_drinks)
+
 def main():
   while True:
     s = Salon(questions,characters)
     s.new_dialogue()
+    s.maybe_add_psychotropic_drink()
     # set signal to timeout
     signal.alarm(10)
     try:

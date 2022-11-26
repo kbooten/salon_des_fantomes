@@ -253,7 +253,7 @@ class Dialogue:
     for psy in self.current_thinker.psychotropics:
       print("attempting transform")
       print(psy)
-      last_utterance = rdp.excerpt_last_utterance_and_transform(self.current_text)
+      last_utterance = rdp.excerpt_last_utterance(self.current_text)
       transformed = psytransform.transform_text(last_utterance,self.current_thinker.psychotropics[psy]['function'],self.current_thinker.psychotropics[psy]['prob'])
       self.current_text = rdp.replace_last_instance(self.current_text,last_utterance,transformed)
 
@@ -268,7 +268,7 @@ class Dialogue:
 
 
   def _heal(self,broken):
-    prompt = "In a few words, complete the following sentence in the style of %s: \n%s" % broken
+    prompt = "In a few words, complete the following sentence in the style of %s: \n%s" % (self.current_thinker,broken)
     healing_text = gpt_interface.gpt3_from_prompt(broken)
     healing_text = healing_text.rstrip("\n ") ## in case padded
     if healing_text.endswith('"')==False: ## add ending quote if it doesn't have it
@@ -292,8 +292,6 @@ class Dialogue:
 
 
 
-
-
   def next(self):
     self.generate_next_line()
     self._remove_trailing_whitespace()
@@ -301,14 +299,13 @@ class Dialogue:
     self._test_and_maybe_heal_ending()
     self._possibly_psychotrope()
     self._possibly_describe()
-    self._maybe_end()
 
 
   def generate(self,n=3,toxicology_needed=True):
     for i in range(n):
       self.next()
       time.sleep(1)
-    if self.direct_question_asked==True:
+    if self.direct_question_asked==True: ## don't end with question
       print("one more turn answer questions")
       self.next()
     if toxicology_needed==True:
