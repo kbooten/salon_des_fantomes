@@ -40,10 +40,16 @@ class Salon:
     self.later_drinks = later_drinks
 
   def get_file_name(self):
+    """
+    return a new file name
+    """
     y,mo,d,h,min = time.localtime()[:5] # 
     return "%s_%d-%d-%d_%d~%d.txt" % (self.file_prefix,mo,d,y,h,min)
 
   def get_rough_word_count(self):
+    """
+    return number of words, roughly
+    """
     with open(self.output_file,'r') as f:
       text = f.read()
     tokens = text.split(' ')
@@ -52,7 +58,10 @@ class Salon:
 
 
   def get_subset_of_characters(self):
-    mandatory = [char for char in characters if (char.is_player==True or char.name=="Socrates")]
+    """
+    return a random subset characters, but always include Socrates and Player
+    """
+    mandatory = [char for char in self.characters if (char.is_player==True or char.name=="Socrates")]
     other_possibilities = [char for char in characters if char not in mandatory] ## all other possibilities
     n_to_select = random.randrange(self.min_people,self.max_people) - len(mandatory)
     others_chosen = random.sample(other_possibilities,n_to_select)
@@ -60,6 +69,9 @@ class Salon:
     return subset_of_characters
 
   def write_output(self,text):
+    """
+    write to file
+    """
     try: ## adding to file
       f = open(self.output_file,'a')
       print('writing to %s' % self.output_file)
@@ -70,6 +82,9 @@ class Salon:
     f.close()
 
   def new_dialogue(self):
+    """
+    generate and output a new conversation
+    """
     next_question = self.questions.pop()
     subset_of_characters = self.get_subset_of_characters()
     description_adder = DescriptionAdder(subset_of_characters,self.current_drinks)
@@ -81,9 +96,9 @@ class Salon:
 
 
   def maybe_add_psychotropic_drink(self):
-    print(">")
-    print(self.current_drinks)
-    print(self.later_drinks)
+    """
+    add drink if enough words have been written
+    """
     rough_word_count = self.get_rough_word_count()
     keys_to_delete = [] ## keep track of what is added
     for drink in self.later_drinks:
@@ -94,9 +109,7 @@ class Salon:
         keys_to_delete.append(drink)
     for del_drink in keys_to_delete: ## remove them from the list of addables
       del self.later_drinks[del_drink]
-    print("<")
-    print(self.current_drinks)
-    print(self.later_drinks)
+
 
 def main():
   while True:

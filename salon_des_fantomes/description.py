@@ -49,7 +49,7 @@ later_drinks = {key:val for key,val in drinks2psycho.items() if val!=None} ## do
 class DescriptionAdder:
 
     def __init__(self,characters,possible_drinks):
-        self.drink_prob = .9
+        self.drink_prob = .2
         self.possible_statement = ""
         self.characters = characters
         self.prepared_text = ""
@@ -84,9 +84,9 @@ class DescriptionAdder:
         if psy==True:
             #text += "  **It tasted like %s.**\n" % random.choice(taste)
             next_taste = drinks2psycho[bev]['cfg'].my_next() ## tick through the cfg
-            text += "  **It tastes like %s.**" % next_taste#random.choice(taste)
+            text += "\n  **It tastes like %s.**" % next_taste#random.choice(taste)
             if random.random()<.23:
-                text += random.choice([
+                text += "\n"+random.choice([
                                     "  **Was it supposed to taste like this?**",
                                     "  **And it was cloudy.**",
                                     "  **An unfamiliar pulse in the cerebelum.**",
@@ -110,6 +110,34 @@ class DescriptionAdder:
         else:
             self.prepare_drink_statement(char,bev)
 
+    def simple1(self,char):
+        action = random.choice(['scratches','adjusts','idly taps','rubs'])
+        body_part = random.choice(['wrist','skull','toe','index finger','chin','cheek','nose','left ass','right ass'])
+        return "%s %s their %s." % (char,action,body_part)
+
+    def simple2(self,char):
+        action = random.choice(['adjusts','fondles','creases','brushes something of'])
+        garb = random.choice(['beret','sash','glove','stole','gown'])
+        return "%s %s their %s." % (char,action,garb)
+
+    def simple3(self,char):
+        action = random.choice(['yawns','leans forward','blinks','leans back','rocks agitatedly'])
+        return "%s %s." % (char,action)
+
+    def simple_description(self):
+        c = 0
+        chars = [c.name for c in self.characters]
+        random.shuffle(chars)
+        for char in chars:
+            if random.random()<.2:
+                simplefunc = random.choice([
+                        self.simple1,
+                        self.simple2,
+                        self.simple3
+                    ])
+                self.prepared_text+="\n\n  **%s**\n" % simplefunc(char)
+
+
     def flush_text(self):
         text = str(self.prepared_text)
         self.prepared_text = ""
@@ -118,7 +146,9 @@ class DescriptionAdder:
     def possible_action(self):
         char = random.choice(self.characters)
         if random.random()<self.drink_prob:
-            self.make_character_drink(char)         
+            self.make_character_drink(char)
+        else:
+            self.simple_description()    
 
 def main():
     d = DescriptionAdder(all_characters,drinks2psycho)
