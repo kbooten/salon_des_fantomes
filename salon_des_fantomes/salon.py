@@ -38,6 +38,7 @@ class Salon:
     ## adding drinks
     self.current_drinks = starting_drinks
     self.later_drinks = later_drinks
+    self.chapter_number = 0
 
   def get_file_name(self):
     """
@@ -91,6 +92,7 @@ class Salon:
     current_dialogue = Dialogue(characters,next_question,description_adder)
     current_dialogue.generate()
     print(current_dialogue.current_text)
+    self.write_output("%d\n" % self.chapter_number)
     self.write_output(current_dialogue.current_text)
     print("%d words" % self.get_rough_word_count())
 
@@ -112,9 +114,10 @@ class Salon:
 
 
 def main():
+  s = Salon(questions,characters)
   while True:
-    s = Salon(questions,characters)
     s.new_dialogue()
+    self.chapter_number+=1
     s.maybe_add_psychotropic_drink()
     # set signal to timeout
     signal.alarm(10)

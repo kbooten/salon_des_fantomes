@@ -50,7 +50,6 @@ class DescriptionAdder:
 
     def __init__(self,characters,possible_drinks):
         self.drink_prob = .2
-        self.possible_statement = ""
         self.characters = characters
         self.prepared_text = ""
         self.possible_drinks = possible_drinks

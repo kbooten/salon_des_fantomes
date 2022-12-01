@@ -43,6 +43,7 @@ class Dialogue:
     self._get_start_char()
     self._start_prompt()
     self._create_start_question()
+    self.initial_question_responded = False
 
 
   def _get_start_char(self):
@@ -76,7 +77,13 @@ class Dialogue:
       self.current_thinker,self.previous_thinker = self.previous_thinker,self.current_thinker #swap
       print(self.current_thinker,self.previous_thinker)
     else:
-      thinkers_available = [k for k in self.all_characters if k!=self.current_thinker]
+      if self.initial_question_responded == False: 
+        ## don't player player at first
+        ## because this would cause socrates to follow socrates, since socrates always asks player question 
+        thinkers_available = [k for k in self.all_characters if (k!=self.current_thinker and k.is_player==False)]
+      else:
+        thinkers_available = [k for k in self.all_characters if k!=self.current_thinker]
+      ## change the thinker, but save previous
       thinker = random.choice(thinkers_available)
       self.previous_thinker = self.current_thinker
       self.current_thinker = thinker
@@ -203,6 +210,7 @@ class Dialogue:
     self.current_text+=" "
     #self.current_text+=" ~ "
     self.current_text+=gpt_interface.gpt3_from_prompt(rdp.decomment_and_snip(self.current_text)+fake_stub['prompt'])
+    self._remove_trailing_whitespace()
 
 
   def _possibly_elaborate(self):
@@ -216,7 +224,6 @@ class Dialogue:
 
 
   def generate_next_line(self):
-    self._next_thinker()
     if self.current_thinker.is_player==True:
       print(self.current_text)
       # prepare question using QuestionAsker
@@ -245,6 +252,7 @@ class Dialogue:
       if fake_stub["prefix"]!=None:
         real_stub+=fake_stub["prefix"]
       self.current_text+=real_stub+gpt_interface.gpt3_from_prompt(rdp.decomment_and_snip(self.current_text)+fake_stub['prompt'])
+      self._remove_trailing_whitespace() ## clean up
 
 
   def _possibly_psychotrope(self):
@@ -291,15 +299,17 @@ class Dialogue:
     self.current_text == rdp.remove_trailing_whitespace(self.current_text)
 
 
-
   def next(self):
-    self.generate_next_line()
-    self._remove_trailing_whitespace()
-    self._possibly_elaborate()
-    self._test_and_maybe_heal_ending()
-    self._possibly_psychotrope()
-    self._possibly_describe()
-
+    self._next_thinker()    ## change who is talking
+    self.generate_next_line() ## generate the next line
+    self._possibly_elaborate() ## possibly keep going with same author 
+    self._test_and_maybe_heal_ending() ## one more gpt3 query if ended with incomplete response
+    self._possibly_psychotrope() ## maybe get weird
+    self._possibly_describe() ## maybe add description of events
+    if self.initial_question_responded == False: ## just keep track of when first person has gone
+      self.initial_question_responded = True ## in response to socrates, so he doesn't ask player question immediately
+    print(self.current_text)
+    
 
   def generate(self,n=3,toxicology_needed=True):
     for i in range(n):
@@ -308,6 +318,6 @@ class Dialogue:
     if self.direct_question_asked==True: ## don't end with question
       print("one more turn answer questions")
       self.next()
-    if toxicology_needed==True:
-      self.add_toxicology_report()
+    # if toxicology_needed==True:
+    #   self.add_toxicology_report()
 

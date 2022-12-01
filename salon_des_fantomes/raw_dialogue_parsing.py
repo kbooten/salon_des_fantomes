@@ -19,20 +19,23 @@ def test_broken_utterance(raw_dialogue_text):
     return broken.group(0)
 
 def replace_last_instance(raw_dialogue_text,to_replace,replacement):
-	"""
-	https://stackoverflow.com/a/59082116
-	"""
-	return replacement.join(raw_dialogue_text.rsplit(to_replace, 1))
+  """
+  https://stackoverflow.com/a/59082116
+  """
+  return replacement.join(raw_dialogue_text.rsplit(to_replace, 1))
 
 def remove_comments(raw_dialogue_text,despace=True):
-	text = re.sub(r'  \*\*.+$',"",raw_dialogue_text,flags=re.M)
-	if despace==True: ## remove consecutive newline
-		text = re.sub(r'\n{3,}',"\n\n",text)
-	return text
+  text = re.sub(r'  \*\*.+$',"",raw_dialogue_text,flags=re.M)
+  if despace==True: ## remove consecutive newline
+    text = re.sub(r'\n{3,}',"\n\n",text)
+  return text
 
 def get_author_utterance_tuples(raw_dialogue_text):
-	utterances = re.findall(r'([A-Z]\w+)(?:\: \")(.+)(?:\"$)',raw_dialogue_text,flags=re.M)
-	return utterances
+  """
+  like ("Socrates","whatever socrates says")
+  """
+  utterances = re.findall(r'([A-Z]\w+)(?:\: \")(.+)(?:\"$)',raw_dialogue_text,flags=re.M)
+  return utterances
 
 def get_last_bit_of_text(raw_dialogue_text,n=3):
   """
@@ -40,13 +43,16 @@ def get_last_bit_of_text(raw_dialogue_text,n=3):
   does this by using a regex to get the indices of "Socrates:" and "Mao:" etc. 
   """
   start_indices_of_utterances = [m.start(0) for m in re.finditer(r'^[A-Z]\w+:',raw_dialogue_text,flags=re.M)] 
-  print(start_indices_of_utterances)
+  #print(start_indices_of_utterances)
   last_n = start_indices_of_utterances[-n:]
-  print(last_n)
+  #print(last_n)
   n_from_last = last_n[0]
   return raw_dialogue_text[n_from_last:] 
 
 def remove_trailing_whitespace(raw_dialogue_text):
+  """
+  clean up trailing white space which can get added sometimes by gpt
+  """
   return re.sub(r'\s+$','',raw_dialogue_text)
 
 def decomment_and_snip(raw_dialogue_text,n=3,clean_up=True):
