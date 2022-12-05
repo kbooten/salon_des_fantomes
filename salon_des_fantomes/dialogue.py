@@ -44,6 +44,8 @@ class Dialogue:
     self._start_prompt()
     self._create_start_question()
     self.initial_question_responded = False
+    self.artworks = artworks.copy()
+    random.shuffle(self.artworks)
 
 
   def _get_start_char(self):
@@ -96,136 +98,188 @@ class Dialogue:
     if self.first_statement_needed==True: ## if socrates has asked a question
       if random.random()<.4:  ## maybe don't immediately switch off this need
         self.first_statement_needed = False ## switch it off
-      return self._standard_secret_prompt()  ## standard response
+      return self._refer_to_keyword_secret_prompt()  ## standard response
     elif self.direct_question_asked==True: ## if a question has been asked
       self.direct_question_asked=False ## switch off this need
-      return self._standard_secret_prompt() ## standard response will do for response to questions
+      return self._refer_to_keyword_secret_prompt() ## standard response will do for response to questions
     else:
       if random.random()<self.current_thinker.curiosity: ## QUESTION
           self.direct_question_asked = True # set variable so will know to return to questioned person
-          return self._question_secret_prompt()
-      elif random.random()<.1: # ART (rarely)
-        return self._art_secret_prompt()
+          return self._ask_question_secret_prompt()
+      elif random.random()<.3: # ART (rarely)
+        return self._consider_art_secret_prompt()
       elif random.random()<.9 and self.current_thinker.ideas!=None: ## IDEA 
         return self._refer_to_quote_or_idea_secret_prompt()
       else: ## how likely to just go with standard prompt
-        return self._standard_secret_prompt()
+        return self._refer_to_keyword_secret_prompt()
 
 
-  def _standard_secret_prompt(self):
+  def _refer_to_keyword_secret_prompt(self):
     print('main')
-    thinker = self.current_thinker.name
-    thinker_stub = random.choice(self.current_thinker.words)
-    previous_thinker = self.previous_thinker.name
     if random.random()<.7:
-      prefix = random.choice(["So","Hmmm...I suppose that","There may be","On the other","That's","Maybe","Certainly","A","While",
-                              "My","Your","My dear","Let's","One","A","Here's one way of putting it","To be precise,","At the risk","Now","For"])
+      prefix = random.choice(
+        ["So","Hmmm...I suppose that","There may be",
+        "On the other","That's","Maybe","Certainly","A","While",
+        "My","Your","My dear","Let's","One","A","Here's one way of putting it",
+        "To be precise,","At the risk","Now","For","Yet","Let's imagine"]
+        )
     else:
       prefix = ""
-    return {"prompt":'\n\nWrite the next utterance the conversation by %s\ \
-    in %s\'s style, \
-    responding to the immediately previous statement by %s, giving detailed philosophical reasons and specific rationale, agreeing or disagreeing. This next line of dialogue should be 15 to 50 words long, \
-    refer to a word or phrase from the previous statement by %s \
-    and include the word "%s". End by closing the quotation mark. \
-    \n\n%s: "%s' % (thinker,thinker,previous_thinker,previous_thinker,thinker_stub,thinker,prefix),
-    "prefix":prefix}
+    ## build prompt
+    prompt_text = """
+
+    Write what <THINKER> would say in response to the last statement by <PREVIOUS_THINKER>.  This utterance should obey the following rules perfecty:
+    1. Important!: It should give detailed philosophical reasons and specific rationale for agreeing or disagreeing.
+    2. Important!: It should be in the style of <THINKER>'s published writing, using grammar and syntax that <THINKER> would use.
+    3. Important!: It should also possess a VERY <DISPOSITION> tone and should feature <STYLE>.
+    4. Important!: It should use three other words that <THINKER> would typically use and that other authors would not.
+    5. Important!: It should include the word <KEYWORD> in the first one or two sentences. 
+    6. Important!: It should not repeat itself. Each sentence should offer a new idea.
+    7. Important!: It should end by closing the quotation mark.
+
+    <THINKER>: "<PREFIX>""" 
+
+    prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
+    prompt_text = prompt_text.replace("<PREVIOUS_THINKER>",self.previous_thinker.name)
+    prompt_text = prompt_text.replace("<STYLE>",self.current_thinker.style)
+    prompt_text = prompt_text.replace("<DISPOSITION>",random.choice(self.current_thinker.dispositions))
+    prompt_text = prompt_text.replace("<PREFIX>",prefix)
+    prompt_text = prompt_text.replace("<KEYWORD>",random.choice(self.current_thinker.words))
+    return {"prompt":prompt_text,"prefix":prefix}
 
 
   def _refer_to_quote_or_idea_secret_prompt(self):
-    print('refer to quote/idea')
-    thinker = self.current_thinker.name
-    thinker_stub = random.choice(self.current_thinker.words)
-    previous_thinker = self.previous_thinker.name
-    print("ideas:")
+    print('refer to quoteidea')
     print(self.current_thinker.ideas)
     quote_or_idea = random.choice(self.current_thinker.ideas)
+    ## build prompt
+    prompt_text = """
+
+    Write what <THINKER> would say in response to the last statement by by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
+    This response should be in the style of <THINKER>'s published writing. It should possess <STYLE>. It should also possess a <DISPOSITION> tone.
+    End by closing the quotation mark.
+
+    <THINKER>: "<PREFIX>""" 
+
     if quote_or_idea.startswith('"'): # quote
-      prefix = 'What you say reminds me of something I once wrote: "%s"' % quote_or_idea
+      prefix = 'Allow me to connect this question we are discussing to something I once wrote: "%s"' % quote_or_idea
     else: ## idea
-      prefix = "As I have always argued, %s" % quote_or_idea
-    return {"prompt":'\n\nWrite the next utterance the conversation by %s\ \
-    in %s\'s style, \
-    responding to the immediately previous statement by %s, giving detailed philosophical reasons and specific rationale, agreeing or disagreeing. This next line of dialogue should be 15 to 50 words long, \
-    refer to a word or phrase from the previous statement by %s \
-    and include the word "%s". End by closing the quotation mark. \
-    \n\n%s: "%s' % (thinker,thinker,previous_thinker,previous_thinker,thinker_stub,thinker,prefix),
-    "prefix":prefix}
+      prefix = "What you are saying reminds me a bit of the fact that %s" % quote_or_idea
+    prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
+    prompt_text = prompt_text.replace("<PREVIOUS_THINKER>",self.previous_thinker.name)
+    prompt_text = prompt_text.replace("<STYLE>",self.current_thinker.style)
+    prompt_text = prompt_text.replace("<DISPOSITION>",random.choice(self.current_thinker.dispositions))
+    prompt_text = prompt_text.replace("<PREFIX>",prefix)
+    return {"prompt":prompt_text,"prefix":prefix}
 
 
-  def _question_secret_prompt(self):
+  def _ask_question_secret_prompt(self):
     print('question')
-    thinker = self.current_thinker.name
-    thinker_stub = random.choice(self.current_thinker.words)
-    previous_thinker = self.previous_thinker.name
-    prefix = random.choice(["My","That","Of","What","Clearly","Here","Let","Please","Could you elaborate"])
-    return {"prompt":'\n\nWrite the next utterance the conversation by %s, \
-    asking %s \
-    a throughtful philosophical question about %s\'s immedately previous utterance. This next utterance should be a question of 20 to 50 or so words long.\
-    \n\n%s: "\
-    %s' % (thinker,previous_thinker,previous_thinker,thinker,prefix),
-    "prefix":prefix}
+    if random.random()<.5:
+      prefix = random.choice(
+        ["My","That","Of","What","Clearly","Here","Let",
+        "Please","Could you elaborate","Why","By what mechanism","How should"]
+        )
+    else:
+      prefix = ""
+    rhet_goals = [
+    "raise a question about what <PREVIOUS_THINKER> means by a certain term",
+    "suggest a different way of thinking about this topic",
+    "try to summarize <PREVIOUS_THINKER>'s point in a more elaborate way",
+    ]
+    prompt_text = """
+
+    Write what <THINKER> would say in response to the last statement by by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
+    This question should be in the style of <THINKER>'s published writing. It should possess <STYLE>. It should also possess a <DISPOSITION> tone.
+    This question should <RHETGOAL>.
+    End by closing the quotation mark.
 
 
-  def _art_secret_prompt(self):
+    <THINKER>: "<PREFIX>""" 
+    prompt_text = prompt_text.replace("<RHETGOAL>",random.choice(rhet_goals)) ## must be first
+    prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
+    prompt_text = prompt_text.replace("<PREVIOUS_THINKER>",self.previous_thinker.name)
+    prompt_text = prompt_text.replace("<STYLE>",self.current_thinker.style)
+    prompt_text = prompt_text.replace("<DISPOSITION>",random.choice(self.current_thinker.dispositions))
+    prompt_text = prompt_text.replace("<PREFIX>",prefix)
+    return {"prompt":prompt_text,"prefix":prefix}
+
+
+  def _consider_art_secret_prompt(self):
     print('art')
-    thinker = self.current_thinker.name
-    thinker_stub = random.choice(self.current_thinker.words)
-    previous_thinker = self.previous_thinker.name
-    artwork = random.choice(artworks)
-    return {"prompt":'\n\nWrite the next utterance the conversation by %s, \
-    describing %s \
-    and connecting it to the previous statement by %s and giving careful philosophical reasons and specific rationale. End by closing the quotation mark. \
-    Be sure to refer to a specific word or idea from %s\'s previous line of dialogue. 50 to 100 words. \
-    \n\n%s: \
-    "What you are saying, %s, \
-    reminds me of this artwork above us, %s. In this' % (thinker,artwork,previous_thinker,previous_thinker,thinker,previous_thinker,artwork),
-    "prefix":"What you are saying, %s, reminds me of this artwork just behind us, %s.  In this" % (previous_thinker,artwork)}
+    art = self.artworks.pop(0) ## take first
+    self.artworks.append(art) ## and put on end
+    prefix = "What you are saying, %s, reminds me of this artwork above us, %s. In this" % (self.previous_thinker.name,art)
+    prompt_text = """
+
+    Write the next utterance in the conversation by <THINKER> in response to the last statement by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
+    This response should be in the style of <THINKER>'s published writing. It should possess <STYLE>. It should also possess a <DISPOSITION> tone.
+    This response should also reflect on the topic conversation in light of the famous artwork, <ART>
+    End by closing the quotation mark.
+
+    <THINKER>: "<PREFIX>""" 
+    prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
+    prompt_text = prompt_text.replace("<PREVIOUS_THINKER>",self.previous_thinker.name)
+    prompt_text = prompt_text.replace("<STYLE>",self.current_thinker.style)
+    prompt_text = prompt_text.replace("<DISPOSITION>",random.choice(self.current_thinker.dispositions))
+    prompt_text = prompt_text.replace("<ART>",art)
+    prompt_text = prompt_text.replace("<PREFIX>",prefix)
+    return {"prompt":prompt_text,"prefix":prefix}
 
 
-  def _elaborate_secret_prompt(self):
+  def _elaborate_secret_prompt(self,text):
     print('elaborate')
-    thinker = self.current_thinker.name
-    thinker_stub = random.choice(self.current_thinker.words)
     modes = ["be coherent, clever, and philosophical"] * 5
-    modes = self.current_thinker.modes + ["make an argument",
-      "add some nuance",
-      "admit where the other speakers could be correct or are making a good point",
-      "define terms carefully",
-      "give an anecdote",
-      "try to see the other side of the argument",
-      "synthesize multiple points made by other people previously in the conversation"]
+    modes += self.current_thinker.modes
     mode = random.choice(modes)
-    return {"prompt":'\n\nContinue the line above by %s\
-    in %s\'s style. This monologue should be 5 to 10 sentences and\
-    it should %s.\
-    It should use new words, not simply repeat what has been said before.\
-    It should also use the word "%s".\
-    \n\n%s continued: "' % (thinker,thinker,mode,thinker_stub,thinker),
-    "prefix":None}
+    nextword = random.choice(["The","A","True,","Let's","Allow me","Perhaps","No,","Although"])
+    prefix = " "+nextword
+    prompt_text = """
+
+    (Continue the essay below, adding around 200 to 300 words.
+    This response should be in the style of <THINKER>'s published writing, using words that <THINKER> often used. It should possess <STYLE>.  Very important: it should <MODE>.
+    In other words, it should be a fake essay by <THINKER>.)
+
+    <TEXT><PREFIX>""" 
+    prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
+    prompt_text = prompt_text.replace("<STYLE>",self.current_thinker.style)
+    prompt_text = prompt_text.replace("<MODE>",mode)
+    prompt_text = prompt_text.replace("<TEXT>",text)
+    prompt_text = prompt_text.replace("<PREFIX>",prefix)
+    return {"prompt":prompt_text,"prefix":prefix}
 
 
   def elaborate(self):
-    fake_stub = self._elaborate_secret_prompt()
-    self.current_text = self.current_text.rstrip('"') ## prep to add more
-    self.current_text+=" "
-    #self.current_text+=" ~ "
-    self.current_text+=gpt_interface.gpt3_from_prompt(rdp.decomment_and_snip(self.current_text)+fake_stub['prompt'])
+    to_elaborate = rdp.excerpt_last_utterance(self.current_text)
+    fake_stub = self._elaborate_secret_prompt(to_elaborate)
+    self.current_text = self.current_text.rstrip('"').rstrip(" ") ## remove
+    if fake_stub["prefix"]!=None:
+      self.current_text+=fake_stub["prefix"]
+    elaboration_text = gpt_interface.gpt3_from_prompt(fake_stub['prompt'],max_tokens=600)
+    self.current_text += elaboration_text
     self._remove_trailing_whitespace()
-
+    if self.current_text[-1]!='"':
+      self.current_text+='"'
 
   def _possibly_elaborate(self):
-    while True:
-      if self.current_thinker.is_player==True: ## don't elaborate when player
-        break
+    """
+    possibly elaborate once
+    """
+    if self.current_thinker.is_player==False: ## don't elaborate when player
       if (random.random()<self.current_thinker.chattiness and self.direct_question_asked==False):
         self.elaborate()
-      else:
-        break
+    # while True:
+    #   if self.current_thinker.is_player==True: ## don't elaborate when player
+    #     break
+    #   if (random.random()<self.current_thinker.chattiness and self.direct_question_asked==False):
+    #     self.elaborate()
+    #   else:
+    #     break
 
 
   def generate_next_line(self):
     if self.current_thinker.is_player==True:
-      print(self.current_text)
+      # print(self.current_text)
       # prepare question using QuestionAsker
       qa.ingest_text(self.current_text)
       a_question = qa.question()
@@ -241,13 +295,16 @@ class Dialogue:
         signal.alarm(0) ## reset as soon as possible
         self.current_text+='\n\n  **Socrates cranes his neck to look at you.**'
         self.current_text+='\n\nSocrates: "%s, %s"' % ("Reader",a_question)
-        self.current_text+='\n\n  **...**\n  **...**.\n  **...**'
+        self.current_text+='\n\n  **...**\n  **...**\n  **...**'
         self.current_text+='\n\n  **After an awkward interval, Socrates is rebuffed by your silence and turns back around.**'
-        self.current_text+='\n\n  **For your own benefit, take a moment to write down your answer in the lines below**:\n  **___________________________**\n  **___________________________**\n  **___________________________**'
+        self.current_text+='\n\n  **For your own benefit, take a moment to write down your answer in the lines below**:\n  **______________________________**\n  **______________________________**\n  **______________________________**'
+        ## don't remember that current_thinker was player
+        self.current_thinker = self.previous_thinker  ## this is dubious because but works I think bc next_thinker run soon
+
     else:
       #fake_stub = prompt_prelude + self._generate_secret_prompt()
       fake_stub = self._generate_secret_prompt()
-      print(fake_stub)
+      #print(fake_stub)
       real_stub = '\n\n%s: "' % self.current_thinker.name
       if fake_stub["prefix"]!=None:
         real_stub+=fake_stub["prefix"]
@@ -256,11 +313,11 @@ class Dialogue:
 
 
   def _possibly_psychotrope(self):
-    print(self.current_thinker)
-    print(self.current_thinker.psychotropics)
+    # print(self.current_thinker)
+    # print(self.current_thinker.psychotropics)
     for psy in self.current_thinker.psychotropics:
-      print("attempting transform")
-      print(psy)
+      # print("attempting transform")
+      # print(psy)
       last_utterance = rdp.excerpt_last_utterance(self.current_text)
       transformed = psytransform.transform_text(last_utterance,self.current_thinker.psychotropics[psy]['function'],self.current_thinker.psychotropics[psy]['prob'])
       self.current_text = rdp.replace_last_instance(self.current_text,last_utterance,transformed)
@@ -275,40 +332,24 @@ class Dialogue:
     self.current_text+=self.description_adder.blood_test_text()
 
 
-  def _heal(self,broken):
-    prompt = "In a few words, complete the following sentence in the style of %s: \n%s" % (self.current_thinker,broken)
-    healing_text = gpt_interface.gpt3_from_prompt(broken)
-    healing_text = healing_text.rstrip("\n ") ## in case padded
-    if healing_text.endswith('"')==False: ## add ending quote if it doesn't have it
-      healing_text+='"'
-    self.current_text+=healing_text
-
-
-  def _test_and_maybe_heal_ending(self):
-    """
-    check for text that wasn't completed by gpt
-    if it wasn't (no trailing quote), add some text
-    """
-    broken = rdp.test_broken_utterance(self.current_text)
-    if broken!=None: ## if parser found broken last dialogue
-      print('heal')
-      self._heal(broken)
-
-
   def _remove_trailing_whitespace(self):
-    self.current_text == rdp.remove_trailing_whitespace(self.current_text)
+    self.current_text = rdp.remove_trailing_whitespace(self.current_text)
+
+
+  def _simple_heal(self):
+    self.current_text = rdp.simple_regex_heal(self.current_text)
 
 
   def next(self):
     self._next_thinker()    ## change who is talking
     self.generate_next_line() ## generate the next line
     self._possibly_elaborate() ## possibly keep going with same author 
-    self._test_and_maybe_heal_ending() ## one more gpt3 query if ended with incomplete response
+    self._simple_heal()
+    #self._test_and_maybe_heal_ending() ## one more gpt3 query if ended with incomplete response
     self._possibly_psychotrope() ## maybe get weird
     self._possibly_describe() ## maybe add description of events
     if self.initial_question_responded == False: ## just keep track of when first person has gone
       self.initial_question_responded = True ## in response to socrates, so he doesn't ask player question immediately
-    print(self.current_text)
     
 
   def generate(self,n=3,toxicology_needed=True):
@@ -316,8 +357,8 @@ class Dialogue:
       self.next()
       time.sleep(1)
     if self.direct_question_asked==True: ## don't end with question
-      print("one more turn answer questions")
+      #print("one more turn answer questions")
       self.next()
-    # if toxicology_needed==True:
-    #   self.add_toxicology_report()
+    if toxicology_needed==True:
+      self.add_toxicology_report()
 

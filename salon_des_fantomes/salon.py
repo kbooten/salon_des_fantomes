@@ -11,6 +11,8 @@ import random
 
 import time # for file naming
 
+import dill as pickle
+
 
 ## using signal for timeout on user input
 import signal
@@ -94,7 +96,9 @@ class Salon:
     print(current_dialogue.current_text)
     self.write_output("%d\n" % self.chapter_number)
     self.write_output(current_dialogue.current_text)
+    self.write_output("\n\n\n")
     print("%d words" % self.get_rough_word_count())
+    self.chapter_number+=1 ## tick up chapter number
 
 
   def maybe_add_psychotropic_drink(self):
@@ -112,13 +116,24 @@ class Salon:
     for del_drink in keys_to_delete: ## remove them from the list of addables
       del self.later_drinks[del_drink]
 
+  def maybe_change_character_emotions(self):
+    npcs = [c for c in characters if c.is_player==False]
+    for c in npcs:
+      if random.random()<.2:
+        if hasattr(c,"dispositions"): ## shouldn't need this unless error in characters.py
+          c.change_disposition()
+
+  def try_to_pickle_characters(self):
+    with open(".characters_state_backup.pkl","wb") as f:
+      f.write(pickle.dumps(self.characters))
+
 
 def main():
   s = Salon(questions,characters)
   while True:
     s.new_dialogue()
-    self.chapter_number+=1
     s.maybe_add_psychotropic_drink()
+    s.try_to_pickle_characters()
     # set signal to timeout
     signal.alarm(10)
     try:
@@ -127,6 +142,8 @@ def main():
     except:
       signal.alarm(0)
       pass
+    s.maybe_change_character_emotions()
+
     
 
 if __name__ == '__main__':
