@@ -137,7 +137,11 @@ def main():
     # set signal to timeout
     signal.alarm(10)
     try:
-      if input("to quit enter 'quit'>")=="quit":
+      user_input = input("quit (q) or pause (p)>")
+      if user_input.lstrip().lower()startswith("p"): # quit
+        signal.alarm(0)
+        input("paused. hit ENTER to keep going.")
+      elif user_input.lstrip().startswith("q"):
         break
     except:
       signal.alarm(0)
