@@ -7,6 +7,8 @@ all_characters = persons.get_people()
 from psychotropics.odd_parenthetical import add_odd_parenthetical
 from psychotropics.doubt import add_doubt
 
+from taste_funcs import *
+
 from cfgs import *
 
 drinks2psycho = {
@@ -26,7 +28,8 @@ drinks2psycho = {
                     #"taste":["like a muddy mixtape","like a few highlighters","like a bismuth spoon","like a signal splitter"],
                     "prob":0.9,
                     "step":0.02,
-                    "cfg":cfg2,
+                    'taste_func':tf1,
+                    #"cfg":cfg2,
                     "chem":"bisephontinol-3",
                     'after_wordcount':1,#0000,
                     },
@@ -35,8 +38,9 @@ drinks2psycho = {
                     #"taste":["like rabbit breath","like leather water","rainy","like a memory of chalk","like a perfect ravine"],
                     "prob":0.9,
                     "step":0.3,
-                    "cfg":cfg1,
-                    "chem":"3-hydroxaform-butane",
+                    'taste_func':tf2,
+                    #"cfg":cfg1,
+                    "chem":"3-hydroxafoam-butane",
                     'after_wordcount':1,#30000,
                     },
 }
@@ -82,7 +86,8 @@ class DescriptionAdder:
         text = "\n\n  **%s takes a sip of %s.**" % (char.name,bev)
         if psy==True:
             #text += "  **It tasted like %s.**\n" % random.choice(taste)
-            next_taste = drinks2psycho[bev]['cfg'].my_next() ## tick through the cfg
+            # next_taste = drinks2psycho[bev]['cfg'].my_next() ## tick through the cfg
+            next_taste = drinks2psycho[bev]['taste_func']()#()#.my_next()
             text += "\n  **It tastes like %s.**" % next_taste#random.choice(taste)
             if random.random()<.23:
                 text += "\n"+random.choice([

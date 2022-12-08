@@ -88,7 +88,8 @@ class Salon:
     """
     generate and output a new conversation
     """
-    next_question = self.questions.pop()
+    next_question = self.questions.pop(0)
+    self.questions.append(next_question)
     subset_of_characters = self.get_subset_of_characters()
     description_adder = DescriptionAdder(subset_of_characters,self.current_drinks)
     current_dialogue = Dialogue(characters,next_question,description_adder)
@@ -138,10 +139,11 @@ def main():
     signal.alarm(10)
     try:
       user_input = input("quit (q) or pause (p)>")
-      if user_input.lstrip().lower()startswith("p"): # quit
+      if user_input=="p": # pause
         signal.alarm(0)
         input("paused. hit ENTER to keep going.")
-      elif user_input.lstrip().startswith("q"):
+      elif user_input == "q":
+        print("quitting")
         break
     except:
       signal.alarm(0)

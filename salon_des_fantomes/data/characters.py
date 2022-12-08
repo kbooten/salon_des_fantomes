@@ -23,8 +23,8 @@ characters = {
 		"quotes":"heidegger.txt",
 		"sample_text":"heidegger.txt",
 		"chattiness":.7,
-		"curiosity":.05,
-		"words":["being","dasein","authenticity","ontology","phenomenology","hermeneutics","existence","temporality","theology","nihilism","ecstasy","angst","care"," fallenness","resoluteness","eigentlichkeit","solitude","death","letting-be","truth"," Being-towards-death","authentic","inauthentic","world","earth","clearing","enframing","equipmentality"," ready-to-hand","present-at-hand","thrownness","facticity","aletheia","unconcealment","authentic self-hood"," disclosedness","disclosure","hiddenness","oblivion","pre-Socratics","Greek","ontic","ontological"],
+		"curiosity":.1,
+		"words":["Sorge","ready-to-hand","facticity","Dasein","Dasein","Dasein","Dasein","Dasein","Dasein","Dasein","Dasein","being","Dasein","authenticity","ontology","phenomenology","hermeneutics","existence","temporality","theology","nihilism","ecstasy","angst","care"," fallenness","resoluteness","Eigentlichkeit","solitude","death","letting-be","truth"," Being-towards-death","authentic","inauthentic","world","earth","clearing","enframing","equipmentality"," ready-to-hand","present-at-hand","thrownness","facticity","aletheia","unconcealment","authentic self-hood"," disclosedness","disclosure","hiddenness","oblivion","pre-Socratics","Greek","ontic","ontological"],
 		"dispositions":["grumpy","serious","wistful","confusing"],
 		"style":"clear sentences",
 		"modes":["be very confusing and wordy","use several big and confusing german words","describe the nature of man","take pains to clarify his point"]
@@ -57,6 +57,37 @@ characters = {
 		"words":["rifle","rifles","cadre","anti-rightist","big-character poster","capitalist roader","rustication","rusticated","peasant", "class struggle", "proletariat", "bourgeoisie", "comrade", "imperialism", "feudalism", "land", "exploitation", "socialism", "communism", "capitalism", "dictatorship of the proletariat", " Chairman Mao", "Great Leap Forward", "Cultural Revolution", "Red Guards", "People's Commune", "Little Red Book"],
 		"dispositions":["militant","self-aggrandizing","serious","oblique","violent","poetic"],
 		"style":"clear sentences",
-		"modes":["excoriate the other guests for their lax morals"]
+		"modes":["excoriate the other guests for being counterrevolutionary",]
 	},
+
+	"Nietzsche":{
+		"quotes":"nietzsche.txt",	
+		"chattiness":.3,
+		"curiosity":.0,
+		"words": ['morality','religion','sentimental weakness','strength','weakness','triumph','pity','beyond shame','beyond morality','shame','pride','ruination','well-ordered men','golden laughter','sacrifice','more human','greatness','destiny','filthy purity','WILL TO POWER','mean religion','idiocy!'],
+		"dispositions":["resentful","energetic","incoherent"],
+		"style":"aphoristic with occasionally capitalized words and manic energy",
+		"modes":["excoriate the other guests for their firm morals",]
+	},
+
+	"Wollstonecraft" :{
+		"quotes":"wollstonecraft.txt",	
+		"chattiness":.3,
+		"curiosity":.0,
+		"words": ["sex","marriage","sentimental","reason","soul of woman","chastity","woman","men","affection of husbands","lust","friendship","equality","prostitutes","government","morality"],
+		"dispositions":["noble","sophisticated"],
+		"style":"long sentences with lots of commas and rare, fancy words",
+		"modes":["explain the differences between women and men","explain the importance of reason"]
+	},
+
+	"Coleridge" :{
+		"quotes":"coleridge.txt",	
+		"chattiness":.3,
+		"curiosity":.0,
+		"words": ["pleasure dome","bower","caves of ice","a miracle of rare device","on honey-dew hath fed","caverns measurleless to a man","on my heart"],
+		"dispositions":["flightly","imaginative"],
+		"style":"poetic with references to surreal nature",
+		"modes":["yearning for nature to come to his rescue","imagining a fantasy world"]
+	},
+
 }

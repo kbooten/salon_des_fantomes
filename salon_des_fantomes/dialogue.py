@@ -11,15 +11,15 @@ with open('data/art.txt','r') as f:
 
 
 ## using signal for timeout on user input
-import signal
+# import signal
+# #
+# class AlarmException(Exception): # https://stackoverflow.com/q/27013127, https://stackoverflow.com/a/27014090, https://stackoverflow.com/a/494273
+#     pass
+# #
+# def signal_handler(signum, frame):
+#   raise AlarmException("user took to long")
 #
-class AlarmException(Exception): # https://stackoverflow.com/q/27013127, https://stackoverflow.com/a/27014090, https://stackoverflow.com/a/494273
-    pass
-#
-def signal_handler(signum, frame):
-  raise AlarmException("user took to long")
-#
-signal.signal(signal.SIGALRM, signal_handler)
+#signal.signal(signal.SIGALRM, signal_handler)
 
 
 from ask_player_questions import QuestionAsker
@@ -46,6 +46,8 @@ class Dialogue:
     self.initial_question_responded = False
     self.artworks = artworks.copy()
     random.shuffle(self.artworks)
+    self.reader_question = False
+    self.player = [c for c in characters if c.is_player][0]
 
 
   def _get_start_char(self):
@@ -75,20 +77,33 @@ class Dialogue:
 
   def _next_thinker(self):
     if self.direct_question_asked==True: ## question has been asked, need to return to it
-      print(self.current_thinker,self.previous_thinker)
       self.current_thinker,self.previous_thinker = self.previous_thinker,self.current_thinker #swap
-      print(self.current_thinker,self.previous_thinker)
     else:
       if self.initial_question_responded == False: 
         ## don't player player at first
         ## because this would cause socrates to follow socrates, since socrates always asks player question 
         thinkers_available = [k for k in self.all_characters if (k!=self.current_thinker and k.is_player==False)]
+        thinker = random.choice(thinkers_available)
+        self.previous_thinker = self.current_thinker
+        self.current_thinker = thinker
       else:
-        thinkers_available = [k for k in self.all_characters if k!=self.current_thinker]
+        print("previous_thinker")
+        print(self.previous_thinker)
+        # if (self.previous_thinker.is_player==True): ## if I've just recently written something
+        #   input("should we go again?")
+        #   if random.random()<.8:
+        #     self.current_thinker,self.previous_thinker = self.previous_thinker,self.current_thinker #swap
+        if (self.current_thinker.is_player==False and self.reader_question==False):
+          if random.random()<.3:
+            self.previous_thinker = self.current_thinker
+            self.current_thinker = self.player
+        else:
+          ## just randomly go to someone else next
+          thinkers_available = [k for k in self.all_characters if k!=self.current_thinker]
       ## change the thinker, but save previous
-      thinker = random.choice(thinkers_available)
-      self.previous_thinker = self.current_thinker
-      self.current_thinker = thinker
+          thinker = random.choice(thinkers_available)
+          self.previous_thinker = self.current_thinker
+          self.current_thinker = thinker
 
 
   def _generate_secret_prompt(self):
@@ -128,7 +143,7 @@ class Dialogue:
     ## build prompt
     prompt_text = """
 
-    Write what <THINKER> would say in response to the last statement by <PREVIOUS_THINKER>.  This utterance should obey the following rules perfecty:
+    Write ONLY what <THINKER> would say in response to the last statement by <PREVIOUS_THINKER>.  This utterance should obey the following rules perfecty:
     1. Important!: It should give detailed philosophical reasons and specific rationale for agreeing or disagreeing.
     2. Important!: It should be in the style of <THINKER>'s published writing, using grammar and syntax that <THINKER> would use.
     3. Important!: It should also possess a VERY <DISPOSITION> tone and should feature <STYLE>.
@@ -155,14 +170,14 @@ class Dialogue:
     ## build prompt
     prompt_text = """
 
-    Write what <THINKER> would say in response to the last statement by by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
+    Write ONLY what <THINKER> would say in response to the last statement by by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
     This response should be in the style of <THINKER>'s published writing. It should possess <STYLE>. It should also possess a <DISPOSITION> tone.
     End by closing the quotation mark.
 
     <THINKER>: "<PREFIX>""" 
 
-    if quote_or_idea.startswith('"'): # quote
-      prefix = 'Allow me to connect this question we are discussing to something I once wrote: "%s"' % quote_or_idea
+    if quote_or_idea.endswith('"'): # quote
+      prefix = 'Allow me to connect this question we are discussing to something I once wrote: %s' % quote_or_idea
     else: ## idea
       prefix = "What you are saying reminds me a bit of the fact that %s" % quote_or_idea
     prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
@@ -189,7 +204,7 @@ class Dialogue:
     ]
     prompt_text = """
 
-    Write what <THINKER> would say in response to the last statement by by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
+    Write ONLY what <THINKER> would say in response to the last statement by by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
     This question should be in the style of <THINKER>'s published writing. It should possess <STYLE>. It should also possess a <DISPOSITION> tone.
     This question should <RHETGOAL>.
     End by closing the quotation mark.
@@ -212,9 +227,9 @@ class Dialogue:
     prefix = "What you are saying, %s, reminds me of this artwork above us, %s. In this" % (self.previous_thinker.name,art)
     prompt_text = """
 
-    Write the next utterance in the conversation by <THINKER> in response to the last statement by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
+    Write ONLY the next utterance in the conversation by <THINKER> in response to the last statement by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
     This response should be in the style of <THINKER>'s published writing. It should possess <STYLE>. It should also possess a <DISPOSITION> tone.
-    This response should also reflect on the topic conversation in light of the famous artwork, <ART>
+    This response should also reflect on the topic conversation in light of the famous artwork, <ART>.  It should make clever connections between this artwork and the topic, perhaps interpreting this artwork symbolically.
     End by closing the quotation mark.
 
     <THINKER>: "<PREFIX>""" 
@@ -265,7 +280,7 @@ class Dialogue:
     """
     possibly elaborate once
     """
-    if self.current_thinker.is_player==False: ## don't elaborate when player
+    if (self.current_thinker.is_player==False and self.reader_question==False): ## don't elaborate when player
       if (random.random()<self.current_thinker.chattiness and self.direct_question_asked==False):
         self.elaborate()
     # while True:
@@ -284,20 +299,23 @@ class Dialogue:
       qa.ingest_text(self.current_text)
       a_question = qa.question()
       # set signal to timeout
-      signal.alarm(10) 
-      try:
-        socrates_question = '\n\nSocrates: "%s, %s"' % (self.current_thinker.name,a_question)
-        player_text = input("%s\n>" % socrates_question)
-        signal.alarm(0) ## reset as soon as possible
+      #signal.alarm(10) 
+      #try:
+      socrates_question = '\n\nSocrates: "%s, %s"' % (self.current_thinker.name,a_question)
+      player_text = input("%s\n>" % socrates_question)
+      #signal.alarm(0) ## reset as soon as possible
+      if len(player_text)!=0: 
         self.current_text+='\n\nSocrates: "%s, %s"' % (self.current_thinker.name,a_question)
         self.current_text+='\n\n%s: "%s"' % (self.current_thinker.name,player_text)
-      except:
-        signal.alarm(0) ## reset as soon as possible
+      #except:
+        #signal.alarm(0) ## reset as soon as possible
+      else:
+        self.reader_question = True
         self.current_text+='\n\n  **Socrates cranes his neck to look at you.**'
         self.current_text+='\n\nSocrates: "%s, %s"' % ("Reader",a_question)
         self.current_text+='\n\n  **...**\n  **...**\n  **...**'
         self.current_text+='\n\n  **After an awkward interval, Socrates is rebuffed by your silence and turns back around.**'
-        self.current_text+='\n\n  **For your own benefit, take a moment to write down your answer in the lines below**:\n  **______________________________**\n  **______________________________**\n  **______________________________**'
+        self.current_text+='\n\n  **For your own benefit, take a moment to write down your answer in the lines below**:\n  **______________________________**\n  **______________________________**\n  **______________________________**\n\n'
         ## don't remember that current_thinker was player
         self.current_thinker = self.previous_thinker  ## this is dubious because but works I think bc next_thinker run soon
 
@@ -342,6 +360,7 @@ class Dialogue:
 
   def next(self):
     self._next_thinker()    ## change who is talking
+    self.reader_question = False  ## has to go after _next_thinker
     self.generate_next_line() ## generate the next line
     self._possibly_elaborate() ## possibly keep going with same author 
     self._simple_heal()
