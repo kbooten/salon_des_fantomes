@@ -307,6 +307,8 @@ class Dialogue:
       if len(player_text)!=0: 
         self.current_text+='\n\nSocrates: "%s, %s"' % (self.current_thinker.name,a_question)
         self.current_text+='\n\n%s: "%s"' % (self.current_thinker.name,player_text)
+        if player_text.rstrip().endswith("?"):
+          self.direct_question_asked =True
       #except:
         #signal.alarm(0) ## reset as soon as possible
       else:
