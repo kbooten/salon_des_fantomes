@@ -60,7 +60,10 @@ class QuestionAsker:
                 chunks.append(" ".join([token for token,tag in subtree.leaves()]))
         if len(chunks)==0:
             return None
-        random_chunk = random.choice(chunks)
+        if random.random()<.7:
+            random_chunk = chunks[-1]
+        else:
+            random_chunk = random.choice(chunks)
         return "Question or critique how we should understand \"%s.\"" % (random_chunk)
 
 
@@ -75,17 +78,21 @@ class QuestionAsker:
         idea = random.choice(player_ideas)
         return "Comment on what %s has said in light of the concept of %s." % (last_author,concept)
 
-
     def COMMENT_on_last_text_random_sentence(self):
         last_author,last_utterance =  self.author_utterance_tuples[-1]
         sentences = sent_tokenize(last_utterance)
         #
         provocations = [
-            "Why not offer a summary to make sure you grasp this point.",
+            "Why not rephrase this in your own words to make sure you grasp this point.",
             "Provide another piece of evidence.",
             "Reflect on this in light of personal experience.",
             "Reflect on this in light of what you know about history.",
             "Try to connect this to a theoretical concept that you find useful.",
+            "Continue this thought.",
+            "Continue this thought.",
+            "Continue this thought.",
+            "Make this point in a more interesting way.",
+            "Make this point in a more interesting way."
             "Support this.",
             "Critique this."
         ]
@@ -110,15 +117,21 @@ class QuestionAsker:
                 provocation = random.choice(provocations)
             return "%s has said \"%s\" %s" % (last_author,random_sentence,provocation)
 
+    # def COMMENT_general(self):
+    #     provocations = []
+    #     perspectives = ["Marxist","normie lib","nihilist","feminist","accelerationist","ironic","Romantic","good natured","imaginative"] 
+    #     for p in perspectives:
+    #         prov = "Reply from a %s perspective." % p
+    #         prov = prov.replace("a i","an i") ## should use regex
+    #         prov = prov.replace("a a","an e")
+    #         provocations.append(prov)
+    #     return random.choice(provocations)
+
     def COMMENT_general(self):
-        provocations = []
-        perspectives = ["Marxist","normie lib","nihilist","feminist","accelerationist","ironic","Romantic","good natured","imaginative"] 
-        for p in perspectives:
-            prov = "Reply from a %s perspective." % p
-            prov = prov.replace("a i","an i") ## should use regex
-            prov = prov.replace("a a","an e")
-            provocations.append(prov)
-        return random.choice(provocations)
+        provocations = [
+            "Do you agree?",
+            "Can you help them make their point?"
+        ]
 
 
     def question(self):

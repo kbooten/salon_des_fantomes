@@ -1,11 +1,13 @@
 import persons
 characters = persons.get_people()
 
+import drinks
+
 from data import questions
 questions = questions.questions
 
 from dialogue import Dialogue
-from description import DescriptionAdder,starting_drinks,later_drinks
+from description import DescriptionAdder#,starting_drinks,later_drinks
 
 import random
 
@@ -28,19 +30,40 @@ signal.signal(signal.SIGALRM, signal_handler)
 
 class Salon:
 
-  def __init__(self,questions,characters):
+  def __init__(self,questions,characters,drinks):
     self.questions = questions
     #self.completed_dialogues = []
     self.characters = characters
+    self.all_drinks = drinks
     self.min_people = 4
-    self.max_people = len(self.characters)
+    self.max_people = 7#len(self.characters)
     ## saving output
     self.file_prefix = "output/output"
     self.output_file = self.get_file_name()
     ## adding drinks
-    self.current_drinks = starting_drinks
-    self.later_drinks = later_drinks
+    self.create_drink_file() 
+    self.current_drinks = []
+    self.set_current_drinks()
+    #self.later_drinks = later_drinks
     self.chapter_number = 0
+
+  def create_drink_file(self):
+    """
+    by default psychotropic drinks are disabled
+    """
+    with open('drinks.txt','w') as f:
+        for d in self.all_drinks:
+            if self.all_drinks[d]==None:
+                f.write(d+"\n")
+            else:
+                f.write('#'+d+"\n")
+    input("Check drinks.txt? (ENTER to continue)")
+
+  def set_current_drinks(self):
+    with open('drinks.txt','r') as f:
+      allowed_drinks = [l.strip() for l in f.readlines()]
+      self.current_drinks = {key:val for key,val in self.all_drinks.items() if key in allowed_drinks}
+      print(self.current_drinks)
 
   def get_file_name(self):
     """
@@ -88,9 +111,11 @@ class Salon:
     """
     generate and output a new conversation
     """
-    next_question = self.questions.pop(0)
-    self.questions.append(next_question)
+    next_question = self.questions.pop(0) ## cycle through, 
+    self.questions.append(next_question)  ##  infinitely 
     subset_of_characters = self.get_subset_of_characters()
+    print(self.current_drinks)
+    print("!")
     description_adder = DescriptionAdder(subset_of_characters,self.current_drinks)
     current_dialogue = Dialogue(characters,next_question,description_adder)
     current_dialogue.generate()
@@ -102,20 +127,20 @@ class Salon:
     self.chapter_number+=1 ## tick up chapter number
 
 
-  def maybe_add_psychotropic_drink(self):
-    """
-    add drink if enough words have been written
-    """
-    rough_word_count = self.get_rough_word_count()
-    keys_to_delete = [] ## keep track of what is added
-    for drink in self.later_drinks:
-      if rough_word_count>self.later_drinks[drink]['after_wordcount']:
-        self.current_drinks.update({drink:self.later_drinks[drink]})
-        print("adding %s" % drink)
-        print(self.current_drinks)
-        keys_to_delete.append(drink)
-    for del_drink in keys_to_delete: ## remove them from the list of addables
-      del self.later_drinks[del_drink]
+  # def maybe_add_psychotropic_drink(self):
+  #   """
+  #   add drink if enough words have been written
+  #   """
+  #   rough_word_count = self.get_rough_word_count()
+  #   keys_to_delete = [] ## keep track of what is added
+  #   for drink in self.later_drinks:
+  #     if rough_word_count>self.later_drinks[drink]['after_wordcount']:
+  #       self.current_drinks.update({drink:self.later_drinks[drink]})
+  #       print("adding %s" % drink)
+  #       print(self.current_drinks)
+  #       keys_to_delete.append(drink)
+  #   for del_drink in keys_to_delete: ## remove them from the list of addables
+  #     del self.later_drinks[del_drink]
 
   def maybe_change_character_emotions(self):
     npcs = [c for c in characters if c.is_player==False]
@@ -128,23 +153,25 @@ class Salon:
     with open(".characters_state_backup.pkl","wb") as f:
       f.write(pickle.dumps(self.characters))
 
-
 def main():
-  s = Salon(questions,characters)
+  s = Salon(questions,characters,drinks.drinks2psycho)
   while True:
     s.new_dialogue()
-    s.maybe_add_psychotropic_drink()
+    #s.maybe_add_psychotropic_drink()
     s.try_to_pickle_characters()
     # set signal to timeout
     signal.alarm(10)
     try:
-      user_input = input("quit (q) or pause (p)>")
+      user_input = input("quit (q) or pause (p), or any key to continue>")
       if user_input=="p": # pause
         signal.alarm(0)
         input("paused. hit ENTER to keep going.")
       elif user_input == "q":
         print("quitting")
         break
+      else:
+        signal.alarm(0)
+        pass
     except:
       signal.alarm(0)
       pass

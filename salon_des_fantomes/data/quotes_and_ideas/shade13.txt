@@ -1,0 +1,3 @@
+an argument can be made more precise by describing its assumptions
+an argument can be made more convincing by considering counter-arguments
+an argument can be made more convincing by carefully defining key terms

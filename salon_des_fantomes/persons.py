@@ -40,7 +40,6 @@ def get_sample_texts(loc):
     paragraphs = [i.replace("-  ","") for i in paragraphs]
     return paragraphs
 
-
 def get_people():
     people = []
     player = Person("Kyle")
@@ -48,6 +47,7 @@ def get_people():
     people.append(player)
     for c in chars.keys():
         person = Person(c)
+        person.longname = chars[c]['longname']
         person.words = chars[c]['words']
         person.dispositions = chars[c]['dispositions']
         person.current_disposition = person.dispositions[0]
