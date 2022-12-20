@@ -42,15 +42,14 @@ def get_sample_texts(loc):
 
 def get_people():
     people = []
-    player = Person("Kyle")
-    player.is_player = True
-    people.append(player)
     for c in chars.keys():
         person = Person(c)
+        if c=="Kyle":
+            person.is_player=True
         person.longname = chars[c]['longname']
         person.words = chars[c]['words']
         person.dispositions = chars[c]['dispositions']
-        person.current_disposition = person.dispositions[0]
+        #person.current_disposition = person.dispositions[0]
         person.modes = chars[c]['modes']
         person.chattiness = chars[c]['chattiness']
         person.curiosity = chars[c]['curiosity']

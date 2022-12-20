@@ -4,11 +4,12 @@ import raw_dialogue_parsing as rdp
 with open('data/art.txt','r') as f:
   artworks = [a.rstrip("\n") for a in f.readlines()]
 
-with open('data/quotes_and_ideas/player.txt','r') as f:
-    player_ideas = [c for c in [i.rstrip("/n") for i in f.readlines()] if len(c)>1]
+# with open('data/quotes_and_ideas/player.txt','r') as f:
+#     player_ideas = [c for c in [i.rstrip("/n") for i in f.readlines()] if len(c)>1]
 
-with open('data/quotes_and_ideas/player_concepts.txt','r') as f:
-    theoretical_concepts = [c for c in [i.rstrip("/n") for i in f.readlines()] if len(c)>1]
+# with open('data/quotes_and_ideas/player_concepts.txt','r') as f:
+#     theoretical_concepts = [c for c in [i.rstrip("/n") for i in f.readlines()] if len(c)>1]
+
 
 import random
 
@@ -21,10 +22,14 @@ stops+=["things","thing","stuff","anything"]
 
 class QuestionAsker:
 
-    def __init__(self):
+    def __init__(self,player):
+        self.player = player
         self.author_utterance_tuples = []
         self.comment_functions = [
             self.COMMENT_on_last_text_random_sentence,
+            self.COMMENT_general,
+            self.COMMENT_general,
+            self.COMMENT_general,
             self.COMMENT_general,
             self.COMMENT_art,
             self.COMMENT_on_small_chunk,
@@ -36,10 +41,10 @@ class QuestionAsker:
 
 
     def COMMENT_art(self):
-        last_author,last_utterance =  self.author_utterance_tuples[-1]
+        #last_author,last_utterance =  self.author_utterance_tuples[-1]
         piece_of_art = random.choice(artworks)
         piece_of_art = piece_of_art.split(",")[0] ## sometimes there is further description after a comma
-        return "Reflect on %s in light of what %s has said." % (piece_of_art,last_author) 
+        return "I wonder if you might draw a connection to this other artwork before us, %s." % (piece_of_art) 
 
 
     def COMMENT_on_small_chunk(self):
@@ -69,14 +74,14 @@ class QuestionAsker:
 
     def COMMENT_with_player_idea(self):
         last_author,last_utterance =  self.author_utterance_tuples[-1]
-        idea = random.choice(player_ideas)
+        idea = random.choice(self.player.ideas)
         return "Comment on what %s has said in light of the idea that %s." % (last_author,idea)
 
-    def COMMENT_with_theory_word(self):
-        concepts = random.choice(theoretical_concepts)
-        last_author,last_utterance =  self.author_utterance_tuples[-1]
-        idea = random.choice(player_ideas)
-        return "Comment on what %s has said in light of the concept of %s." % (last_author,concept)
+    # def COMMENT_with_theory_word(self):
+    #     concepts = random.choice(theoretical_concepts)
+    #     last_author,last_utterance =  self.author_utterance_tuples[-1]
+    #     idea = random.choice(player_ideas)
+    #     return "Comment on what %s has said in light of the concept of %s." % (last_author,concept)
 
     def COMMENT_on_last_text_random_sentence(self):
         last_author,last_utterance =  self.author_utterance_tuples[-1]
@@ -87,7 +92,7 @@ class QuestionAsker:
             "Provide another piece of evidence.",
             "Reflect on this in light of personal experience.",
             "Reflect on this in light of what you know about history.",
-            "Try to connect this to a theoretical concept that you find useful.",
+            "Try to cleverly connect this to a bit of high theory that you like to jabber on about.",
             "Continue this thought.",
             "Continue this thought.",
             "Continue this thought.",
@@ -117,21 +122,27 @@ class QuestionAsker:
                 provocation = random.choice(provocations)
             return "%s has said \"%s\" %s" % (last_author,random_sentence,provocation)
 
-    # def COMMENT_general(self):
-    #     provocations = []
-    #     perspectives = ["Marxist","normie lib","nihilist","feminist","accelerationist","ironic","Romantic","good natured","imaginative"] 
-    #     for p in perspectives:
-    #         prov = "Reply from a %s perspective." % p
-    #         prov = prov.replace("a i","an i") ## should use regex
-    #         prov = prov.replace("a a","an e")
-    #         provocations.append(prov)
-    #     return random.choice(provocations)
+    def COMMENT_general(self):
+        provocations = []
+        perspectives = ["Marxist","normie lib","nihilist","feminist","accelerationist","ironic","Romantic","good natured","imaginative"] 
+        for p in perspectives:
+            prov = "Reply from a %s perspective." % p
+            prov = prov.replace("a i","an i") ## should use regex
+            prov = prov.replace("a a","an e")
+            provocations.append(prov)
+        return random.choice(provocations)
 
     def COMMENT_general(self):
         provocations = [
             "Do you agree?",
-            "Can you help them make their point?"
+            "Respond.",
+            "Do you agree?",
+            "Respond.",
+            "Do you agree?",
+            "Respond.",
+            "Ask a question that brings us back to the question with which I began this conversation.",
         ]
+        return random.choice(provocations)
 
 
     def question(self):
@@ -181,9 +192,14 @@ Freud: "Here, it seems that you are saying two things: first, that the proletari
 Freud took a sip of sherry.
 
 """
-    qa = QuestionAsker()
+    import persons
+    characters = persons.get_people()
+    player = [c for c in characters if c.is_player][0]
+    qa = QuestionAsker(player)
     qa.ingest_text(test_text)
     print(qa.question())
+    for cf in qa.comment_functions:
+        print(cf())
 
 
 if __name__ == '__main__':

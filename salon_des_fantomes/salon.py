@@ -1,3 +1,5 @@
+import random
+
 import persons
 characters = persons.get_people()
 
@@ -5,11 +7,11 @@ import drinks
 
 from data import questions
 questions = questions.questions
+random.shuffle(questions)
 
 from dialogue import Dialogue
 from description import DescriptionAdder#,starting_drinks,later_drinks
 
-import random
 
 import time # for file naming
 
@@ -117,7 +119,7 @@ class Salon:
     print(self.current_drinks)
     print("!")
     description_adder = DescriptionAdder(subset_of_characters,self.current_drinks)
-    current_dialogue = Dialogue(characters,next_question,description_adder)
+    current_dialogue = Dialogue(subset_of_characters,next_question,description_adder)
     current_dialogue.generate()
     print(current_dialogue.current_text)
     self.write_output("%d\n" % self.chapter_number)

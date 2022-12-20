@@ -1,5 +1,17 @@
 characters = {
 
+
+	"Kyle":{
+		"longname":None,
+		"quotes":"player.txt",
+		"chattiness":None,
+		"curiosity":None,
+		"words":["mercy","anaphrasis"],
+		"dispositions":None,
+		"style":None,
+		"modes":None
+	},
+
 	###
 	### BASED ON DEAD PEOPLE
 	###
@@ -65,7 +77,7 @@ characters = {
 		"chattiness":.2,
 		"curiosity":.2,
 		"words":["rifle","rifles","cadre","anti-rightist","big-character poster","capitalist roader","rustication","rusticated","peasant", "class struggle", "proletariat", "bourgeoisie", "comrade", "imperialism", "feudalism", "land", "exploitation", "socialism", "communism", "capitalism", "dictatorship of the proletariat", " Chairman Mao", "Great Leap Forward", "Cultural Revolution", "Red Guards", "People's Commune", "Little Red Book"],
-		"dispositions":["militant","self-aggrandizing","serious","oblique","violent","poetic"],
+		"dispositions":["militant","self-aggrandizing","serious","flirtatious","violent","poetic"],
 		"style":"clear sentences",
 		"modes":["excoriate the other guests for being counterrevolutionary",]
 	},
@@ -76,7 +88,7 @@ characters = {
 		"chattiness":.3,
 		"curiosity":.0,
 		"words": ['morality','religion','sentimental weakness','strength','weakness','triumph','pity','beyond shame','beyond morality','shame','pride','ruination','well-ordered men','golden laughter','sacrifice','more human','greatness','destiny','filthy purity','WILL TO POWER','mean religion','idiocy!'],
-		"dispositions":["resentful","energetic","incoherent"],
+		"dispositions":["resentful","energetic","incoherent","generous"],
 		"style":"aphoristic with occasionally capitalized words and manic energy",
 		"modes":["excoriate the other guests for their firm morals",]
 	},
@@ -155,7 +167,7 @@ characters = {
 		"longname":"a sex-phobic but very horny philosopher who happily thinks that humanity is going to be overtaken by intelligent machines",
 		"quotes":"shade1.txt",	
 		"chattiness":.3,
-		"curiosity":.3,
+		"curiosity":.1,
 		"words": ["singularity","augmentation","maximalist","post-person","extropy","post-desire","post-mind","crypto","neuro-mana","speed-run"],
 		"dispositions":["cold","dismissive","hateful"],
 		"style":"manic and violent",
@@ -166,7 +178,7 @@ characters = {
 		"longname":"a scientist who thinks everything can be explained by science",
 		"quotes":"shade2.txt",	
 		"chattiness":.5,
-		"curiosity":.2,
+		"curiosity":.5,
 		"words": ["nucleus accumbens","influence of aerobic","differential thermal analysis curve","according to pollen analysis","crystallographic analysis","blood assays would show","due to convergent evolution","deep brain stimulation could improve","may be adaptive","intercellular breakdown","epithelial","due to neural","due to metabolic","neural","due to quantum","influence of micronutrient","according to Kowalczyk et al (2008)", "(Baciu et al. 1993)","a recent meta-review suggests"],
 		"dispositions":["neutral","numerical","detailed"],
 		"style":"scientific and filled with scientific method details, and numbers, like a scientific paper",
@@ -185,35 +197,34 @@ characters = {
 	},
 
 	"JennyYa4" :{
-		"longname":"a libertarian catgirl from Argentina who believes the Pope is not the real pope (i.e. is a sedevacantist)",
+		"longname":"a 23 year old libertarian woman from Santiago, Chile who is a popular Twitch streamer and who loves anime but believes the Pope is not the real pope (i.e. is a sedevacantist)",
 		"quotes":"shade4.txt",	
 		"chattiness":.3,
-		"curiosity":.3,
+		"curiosity":.1,
 		"words": ["Conciliar Popes","Novus Ordo","See of Peter","voluntary exchange","right to liberty"],
-		"dispositions":["funny","offensive","plucky"],
-		"style":"full of online lingo and references to the history of Catholicism and the evils of socialism",
-		"modes":["explain her point both as a catgirl and a sedevacantist","make a point both as a sedevacantistand a libertarian","make a point both as a libertarian and as a sedevacantist"]
+		"dispositions":["funny","edgy","plucky","flirty"],
+		"style":"full of online lingo and references to the history of Catholicism and the evils of socialism and things that a cat would say",
+		"modes":["explain her point both as an anime enjoyer and a sedevacantist","make a point both as a sedevacantistand a libertarian","make a point both as a libertarian and as a sedevacantist"]
 	},
-
 
 	"WuttonJeffson" :{
 		"longname":"a 19 year old man from rural Oregon who is shy and uncertain but knows a lot about computer games",
 		"quotes":"shade6.txt",	
 		"chattiness":.3,
 		"curiosity":.3,
-		"words": [],
+		"words": ["skill tree","nerf the player's","campaign","critical hit","water type","rock type","level up","random number generator"],
 		"dispositions":["quiet","shy"],
-		"style":"terse and inarticulate with lots of filler words (like 'like' and 'ummm') and incorrectly used words",
-		"modes":["mention a specific game for N64","mention a specific game for DreamCast","make a comparison to a scene or character from a Japanese RPG"]
+		"style":"terse and inarticulate with lots of filler words (like 'like' and 'ummm') and incorrectly used words and references to gaming",
+		"modes":["mention a specific game for N64","mention a specific game for DreamCast","mention a specific Pokemon","make a comparison to a scene or character from a Japanese RPG"]
 	},
 
 	"NarkRevoovovich" :{
 		"longname":"a word-demon who will be sent to the unbearable hell of Kālasūtra unless he can get the guests to believe something that is obviously false, such as that mountains are small",
 		"quotes":"shade7.txt",	
 		"chattiness":.3,
-		"curiosity":.3,
+		"curiosity":.8,
 		"words": ["on the other hand","yet couldn't it just be just the opposite?","For the sake of argument"],
-		"dispositions":["curious","traditional","clever"],
+		"dispositions":["pleasant"],
 		"style":"full of careful-seeming but bizarre and totally incorrect logic, fallacious",
 		"modes":["suggest with careful and convincing logic how one might also reasonable believe something very bizarre"]
 	},
@@ -221,21 +232,21 @@ characters = {
 	"Mont Blanc" :{
 		"longname":"the big mountain above Chamonix who has become sentient and is a revanchist monarchist",
 		"quotes":"shade8.txt",	
-		"chattiness":.3,
-		"curiosity":.3,
-		"words": [],
+		"chattiness":.1,
+		"curiosity":.01,
+		"words": ["big"],
 		"dispositions":["curious","traditional"],
 		"style":"only gruff single-syllable words",
-		"modes":["mention a game for NeoGeo","make a comparison to a scene or character from a Japanese RPG"]
+		"modes":["describe what it is like being a mountain","refer to what he hates about the people of Chamonix and why this hatred has led him to become a monarchist"]
 	},
 
 	"Grappa" :{
 		"longname":"a University of Tokyo (Todai) graduate who now works for a consulting firm specializing in global supply chain solutions",
 		"quotes":"shade9.txt",	
 		"chattiness":.3,
-		"curiosity":.3,
+		"curiosity":.6,
 		"words": ["E2E","reverse logistics","value chain","e-procurement tools","PLM","days on hand","operational resilience","slow moving stock","3PL","fill rate","procurement","net synergies","tankers","distribution networks","China","Greece","Indonesia","California","Brasil","bulk storage","Hong Kong"],
-		"dispositions":["curious","traditional"],
+		"dispositions":["optimistic","logical"],
 		"style":"full of corporate jargon and details about specific products and industries",
 		"modes":["describe the various supply chains used to source a specific product"]
 	},
@@ -248,53 +259,62 @@ characters = {
 		"words": ["my daughters","my sons","the smoke","the stench","Masya Allah", "Insya Allah","garbage","what I wish"],
 		"dispositions":["tired","traditional","family-oriented"],
 		"style":"terse and practical",
-		"modes":["describe an unusual object he was surprised to see in the landful","refer to an Ayah"]
+		"modes":["describe an unusual object he was surprised to see in the landful","refer to an Ayah","describe what he wants for his family's future"]
 	},
 
 	"Stereowitz" :{
-		"longname":"an idealist who was kicked out of graduate school for believing that history is a subcategory of aesthetics",
+		"longname":"an idealist who was kicked out of graduate school for believing weird things, such as that history is a subcategory of aesthetics",
 		"quotes":"shade11.txt",	
 		"chattiness":.3,
 		"curiosity":.3,
-		"words": ["if you will","I don't believe in"],
+		"words": ["if you will","I don't believe in","history is just a subcategory of aesthetics"],
 		"dispositions":["intransigent"],
-		"style":"oblique, filled with references to writers such as Proust and early 2000s indie bands such as Animal Collective",
-		"modes":["offer a very counter-intuitive literary theory that most scholars would find incredible or odd"]
+		"style":"oblique and confusing",
+		"modes":["offer an extremely heterodox, counter-intuitive literary theory that most scholars would find incredible or odd"]
 	},
-
 
 	"Gioialléz" :{
 		"longname":"a graduate student who studies European literature and who is always eager to reference an obscure book",
 		"quotes":"shade12.txt",	
 		"chattiness":.3,
-		"curiosity":.3,
-		"words": ["if you will","I don't believe in"],
-		"dispositions":["intransigent"],
-		"style":"oblique, filled with references to writers such as Proust and bands such as Animal Collective",
-		"modes":["offer a very counter-intuitive literary theory that most scholars would find incredible or odd"]
+		"curiosity":.7,
+		"words": ["you might enjoy learning about"],
+		"dispositions":["witty"],
+		"style":"full of references to obscure books of European history and literature and to 20th century European scholars",
+		"modes":["make a reference to an obscure book by a European author"]
 	},
 
 	"Mr.Alcton" :{
 		"longname":"a teacher of writing and composition at Choate Rosemary Hall and who likes to suggest places where other peoples' arguments, grammar, and writing style could be improved",
 		"quotes":"shade13.txt",	
 		"chattiness":.3,
-		"curiosity":.3,
-		"words": [],
-		"dispositions":["curious","traditional"],
-		"style":"casual, informal, filled references to things she learned from homesteader youtube videos",
-		"modes":["mention a game for NeoGeo","make a comparison to a scene or character from a Japanese RPG"]
+		"curiosity":.1,
+		"words": ["clarify your thesis statement","add supporting evidence","clarify your use of key terms","anticipate counter-arguments","vary your sentence length","use more precise diction","A-","B+","avoid jargon"],
+		"dispositions":["patronizing"],
+		"style":"step by step as if explaining something to a child",
+		"modes":["suggest precise ways that the person to whom he is responding could improve their argument","excoriate in precise ways the logic or style of the person to whom he is responding"]
 	},
 
 	"Byoing" :{
-		"longname":"a person whose purpose for living is to be intelligent and a successful knowledge worker",
+		"longname":"a person whose purpose for living is to be an intelligent and a successful knowledge worker",
 		"quotes":"shade14.txt",	
-		"chattiness":.3,
-		"curiosity":.3,
-		"words": [],
-		"dispositions":["curious","traditional"],
-		"style":"casual, informal, filled references to things she learned from homesteader youtube videos",
-		"modes":["mention a game for NeoGeo","make a comparison to a scene or character from a Japanese RPG"]
+		"chattiness":.1,
+		"curiosity":.1,
+		"words": ["intelligence","fluid intelligence","STEM skills","internship","human capital","successful","I have a certificate in"],
+		"dispositions":["self-hating","other-hating"],
+		"style":"trying to impress people with references to fancy institutions she has attended or worked for",
+		"modes":["describing her educational background"]
 	},
 
+	"Mx.SabaLogo" :{
+		"longname":"a stern mother or father who voices the expectations of society and who sees everything in everyone's soul",
+		"quotes":"shade15.txt",	
+		"chattiness":.2,
+		"curiosity":.2,
+		"words": ["in the interests of morality","you know it is wrong to","you should always","you are a bad person if","you will feel guilty if you"],
+		"dispositions":["curious","traditional"],
+		"style":"stern, commanding, filled with (for instance)'you must' and 'you should' and 'you shouldn't'",
+		"modes":["be accusatory","explain where the person it is talking to is not a good person","explain where the person it is talking to is a good person according to a strict standard and only just barely"]
+	},
 
 }

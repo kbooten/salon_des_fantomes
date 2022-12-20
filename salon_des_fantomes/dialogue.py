@@ -9,21 +9,59 @@ import raw_dialogue_parsing as rdp
 with open('data/art.txt','r') as f:
   artworks = [a.rstrip("\n") for a in f.readlines()]
 
-
-## using signal for timeout on user input
-# import signal
-# #
-# class AlarmException(Exception): # https://stackoverflow.com/q/27013127, https://stackoverflow.com/a/27014090, https://stackoverflow.com/a/494273
-#     pass
-# #
-# def signal_handler(signum, frame):
-#   raise AlarmException("user took to long")
-#
-#signal.signal(signal.SIGALRM, signal_handler)
-
-
 from ask_player_questions import QuestionAsker
-qa = QuestionAsker()
+
+from termcolor import colored, cprint
+
+
+meta_dialogue_instruction = """
+
+You are writing a script for a philosophical dialogue in which one person talks and then another talks.  Like this:
+
+Socrates: "Then, my friend, we must not regard what the many say of us; but what he, the one man who has understanding of just and unjust, will say, and what the truth will say. And therefore you begin in error when you advise that we should regard the opinion of the many about just and unjust, good and evil, honourable and dishonourable.—‘Well,’ someone will say, ‘but the many can kill us.’"
+
+Crito: "Yes, Socrates; that will clearly be the answer.  And I will search for the answer."
+
+Socrates: "And it is true; but still I find with surprise that the old argument is unshaken as ever. And I should like to know whether I may say the same of another proposition—that not life, but a good life, is to be chiefly valued?"
+
+
+Notice that the lines of dialogue are in the first person, not the third person.  This is what I want:
+
+Socrates: "That is a good point.
+
+And this is NOT what I want:
+
+Socrates: "Socrates would argue that this is a good point."
+
+
+Notice also that characters don't repeat what other characters have said or what they have said.  Each line offers a new idea.
+
+Also, a very important instruction: characters should not voice 'average' or 'common-sense' opinions that a smart, reasonable person is likely to have.  The should NOT say things like:
+
+Art should indeed be about more than just facing our fears.
+
+Democracy is good because everybody should have a voice.
+
+They SHOULD say things like:
+
+Art is about making people afraid of themselves.
+
+Democracy is good because it represses the individual will by pretending to give it voice.
+
+
+Your job is to continue the dialogue, providing ONLY THE NEXT LINE OF DIALOGUE. Once you provide the next line of dialogue, stop.  In other words DO NOT produce a response like this:
+
+Jenny: "What you are saying reminds me a bit of the fact that the See of Peter is empty, and that is actually a good thing. You could say that the papacy is just an artifact of a more advanced civilization. But, I don't really buy into that." Greg: "I'm not sure if I completely buy into that, but I can see where you're coming from. The papacy is an artifact of a more advanced civilization, and it's possible that it will eventually be replaced by something more efficient. However, politics still play a significant role in shaping societies and nations."
+
+This is a bad response because it contains dialogue for multiple characters (Jenny and Greg).  You should always stop with one character, like this:
+
+Jenny: "What you are saying reminds me a bit of the fact that the See of Peter is empty, and that is actually a good thing. You could say that the papacy is just an artifact of a more advanced civilization. But, I don't really buy into that."
+
+
+The discussion should be coherent and stick to the question, which is this: <QUESTION>
+
+"""
+
 
 class Dialogue:
 
@@ -35,10 +73,8 @@ class Dialogue:
     self.max_tokens=70
     self.current_text = ""#prompt_prelude
     self.previous_thinker = None
-    # self.current_thinker = [t for t in characters if t.name=="Socrates"][0]
     self.direct_question_asked = False
     self.first_statement_needed = True
-    #self.suffix = '."'
     self.all_characters = characters
     self._get_start_char()
     self._start_prompt()
@@ -48,6 +84,9 @@ class Dialogue:
     random.shuffle(self.artworks)
     self.reader_question = False
     self.player = [c for c in characters if c.is_player][0]
+    self.qa = QuestionAsker(self.player)
+    self.interrupt = False
+    self.interrupt_text = ""
 
 
   def _get_start_char(self):
@@ -71,39 +110,41 @@ class Dialogue:
 
 
   def _create_start_question(self):
-    question = '%s: "%s"' % (self.current_thinker.name,self.question)
+    question = '%s: "My friends, I pose a question for our thoughtful discussion: %s"' % (self.current_thinker.name,self.question)
     self.current_text += question
 
 
   def _next_thinker(self):
+    if (self.current_thinker!=self.player and self.direct_question_asked==False):
+      interrupt = input("{interrupt?}>")
+      if interrupt!="":
+        self.interrupt=True
+        self.previous_thinker = self.current_thinker
+        self.current_thinker = self.player
+        self.interrupt_text = interrupt
+        return
     if self.direct_question_asked==True: ## question has been asked, need to return to it
       self.current_thinker,self.previous_thinker = self.previous_thinker,self.current_thinker #swap
-    else:
-      if self.initial_question_responded == False: 
-        ## don't player player at first
+    elif self.initial_question_responded == False: 
+        ## don't allow player to respond first
         ## because this would cause socrates to follow socrates, since socrates always asks player question 
         thinkers_available = [k for k in self.all_characters if (k!=self.current_thinker and k.is_player==False)]
         thinker = random.choice(thinkers_available)
         self.previous_thinker = self.current_thinker
         self.current_thinker = thinker
-      else:
-        print("previous_thinker")
-        print(self.previous_thinker)
-        # if (self.previous_thinker.is_player==True): ## if I've just recently written something
-        #   input("should we go again?")
-        #   if random.random()<.8:
-        #     self.current_thinker,self.previous_thinker = self.previous_thinker,self.current_thinker #swap
-        if (self.current_thinker.is_player==False and self.reader_question==False):
-          if random.random()<.3:
-            self.previous_thinker = self.current_thinker
-            self.current_thinker = self.player
-        else:
-          ## just randomly go to someone else next
-          thinkers_available = [k for k in self.all_characters if k!=self.current_thinker]
+    else:
+      # ## if player is the previous_person, maybe return to them (i.e. focus on player, create player/nonplayer loops)
+      # if (self.current_thinker.is_player==False and self.previous_thinker.is_player==False and self.reader_question==False):
+      #   if random.random()<.3:
+      #     self.previous_thinker = self.current_thinker
+      #     self.current_thinker = self.player
+      # else:
+        ## just randomly go to someone else next
+      thinkers_available = [k for k in self.all_characters if k!=self.current_thinker]
       ## change the thinker, but save previous
-          thinker = random.choice(thinkers_available)
-          self.previous_thinker = self.current_thinker
-          self.current_thinker = thinker
+      thinker = random.choice(thinkers_available)
+      self.previous_thinker = self.current_thinker
+      self.current_thinker = thinker
 
 
   def _generate_secret_prompt(self):
@@ -121,8 +162,8 @@ class Dialogue:
       if random.random()<self.current_thinker.curiosity: ## QUESTION
           self.direct_question_asked = True # set variable so will know to return to questioned person
           return self._ask_question_secret_prompt()
-      elif random.random()<.3: # ART (rarely)
-        return self._consider_art_secret_prompt()
+      # elif random.random()<.3: # ART (rarely)
+      #   return self._consider_art_secret_prompt()
       elif random.random()<.9 and self.current_thinker.ideas!=None: ## IDEA 
         return self._refer_to_quote_or_idea_secret_prompt()
       else: ## how likely to just go with standard prompt
@@ -136,25 +177,33 @@ class Dialogue:
         ["So","Hmmm...I suppose that","There may be",
         "On the other","That's","Maybe","Certainly","A","While",
         "My","Your","My dear","Let's","One","A","Here's one way of putting it",
-        "To be precise,","At the risk","Now","For","Yet","Let's imagine"]
+        "To be","At the risk","Now","For","Yet","Let's imagine"]
         )
     else:
       prefix = ""
     ## build prompt
     prompt_text = """
+    Here is part of a script, a conversation between some people.
+
+    <PREVIOUS>
+
+    ***
 
     Write ONLY what <THINKER>, <LONGNAME>, would say in response to the last statement by <PREVIOUS_THINKER>.
     This utterance should obey the following rules perfecty:
     1. Important!: It should give detailed philosophical reasons and specific rationale for agreeing or disagreeing.
-    2. Important!: It should be in the style of <THINKER>'s published writing, using grammar and syntax that <THINKER> would use.
+    2. Important!: It should be in the style of <THINKER>'s published writing.
     3. Important!: It should also possess a VERY <DISPOSITION> tone and should feature <STYLE>.
-    4. Important!: It should use three other words that <THINKER> would typically use and that other authors would not.
     5. Important!: It should include the word <KEYWORD> in the first one or two sentences. 
-    6. Important!: It should not repeat itself. Each sentence should offer a new idea.
-    7. Important!: It should end by closing the quotation mark.
+    6. Important!: It should not repeat itself OR ANY PREVIOUS SENTENCES UTTERED BY THIS OR OTHER CHARACTERS. Each sentence should offer a new idea.
+    7. Important!: 50-200 words.
+    8. Important!: It should express a strange, counter-intuitive opinion that is charateristic of <THINKER> uniquely, not a general one that many people might hold.
+
+    Ok, now complete the dialogue:
 
     <THINKER>: "<PREFIX>""" 
-
+    prompt_text = prompt_text.replace("<PREVIOUS>",rdp.get_last_bit_of_text(self.current_text))
+    prompt_text = prompt_text.replace("<QUESTION>",self.question)
     prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
     prompt_text = prompt_text.replace("<LONGNAME>",self.current_thinker.longname)
     prompt_text = prompt_text.replace("<PREVIOUS_THINKER>",self.previous_thinker.name)
@@ -171,11 +220,15 @@ class Dialogue:
     quote_or_idea = random.choice(self.current_thinker.ideas)
     ## build prompt
     prompt_text = """
+    Here is part of a script, a conversation between some people.
+
+    <PREVIOUS>
+
+    ***
 
     Write ONLY what <THINKER>, <LONGNAME>, would say in response to the last statement by by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
     <THINKER> is <LONGNAME>.
-    This response should be in the style of <THINKER>'s published writing. It should possess <STYLE>. It should also possess a <DISPOSITION> tone.
-    End by closing the quotation mark.
+    This response should be in the style of <THINKER>'s published writing. It should possess <STYLE>. It should also possess a <DISPOSITION> tone. 
 
     <THINKER>: "<PREFIX>""" 
 
@@ -183,6 +236,8 @@ class Dialogue:
       prefix = 'Allow me to connect this question we are discussing to something I once wrote: %s' % quote_or_idea
     else: ## idea
       prefix = "What you are saying reminds me a bit of the fact that %s" % quote_or_idea
+    prompt_text = prompt_text.replace("<PREVIOUS>",rdp.get_last_bit_of_text(self.current_text))
+    prompt_text = prompt_text.replace("<QUESTION>",self.question)    
     prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
     prompt_text = prompt_text.replace("<LONGNAME>",self.current_thinker.longname)
     prompt_text = prompt_text.replace("<PREVIOUS_THINKER>",self.previous_thinker.name)
@@ -207,14 +262,22 @@ class Dialogue:
     "try to summarize <PREVIOUS_THINKER>'s point in a more elaborate way",
     ]
     prompt_text = """
+    Here is part of a script, a conversation between some people.
 
+    <PREVIOUS>
+
+    ***
+    
     Write ONLY what <THINKER>, <LONGNAME>, would say in response to the last statement by by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
     This question should be in the style of <THINKER>'s published writing. It should possess <STYLE>. It should also possess a <DISPOSITION> tone.
     This question should <RHETGOAL>.
-    End by closing the quotation mark.
+    Do not refer to <THINKER> in the 3rd person.  Remember: you ARE <THINKER>.
+    Only write the next dialogue by <THINKER>.  Don't continue the dialogue by imagining what other characters would say in reply.
 
 
     <THINKER>: "<PREFIX>""" 
+    prompt_text = prompt_text.replace("<PREVIOUS>",rdp.get_last_bit_of_text(self.current_text))
+    prompt_text = prompt_text.replace("<QUESTION>",self.question)
     prompt_text = prompt_text.replace("<RHETGOAL>",random.choice(rhet_goals)) ## must be first
     prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
     prompt_text = prompt_text.replace("<LONGNAME>",self.current_thinker.longname)
@@ -224,28 +287,54 @@ class Dialogue:
     prompt_text = prompt_text.replace("<PREFIX>",prefix)
     return {"prompt":prompt_text,"prefix":prefix}
 
+  # def _specific_artwork_connection(self):
+  #   print('art_specific')
+  #   quality = random.choice(["form","use of color","symbolism","place within art history","mood","size","complexity"])
+  #   prompt_text = """
 
-  def _consider_art_secret_prompt(self):
-    print('art')
-    art = self.artworks.pop(0) ## take first
-    self.artworks.append(art) ## and put on end
-    prefix = "What you are saying, %s, reminds me of this artwork above us, %s. In this" % (self.previous_thinker.name,art)
-    prompt_text = """
+  #   Write ONLY what <THINKER>, <LONGNAME>, would say in response to the last statement by by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
+  #   This question should be in the style of <THINKER>'s published writing. It should possess <STYLE>. It should also possess a <DISPOSITION> tone.
+  #   This question should <RHETGOAL>.
+  #   Do not refer to <THINKER> in the 3rd person.  Remember: you ARE <THINKER>.
+  #   Only write the next dialogue by <THINKER>.  Don't continue the dialogue by imagining what other characters would say in reply.
 
-    Write ONLY the next utterance in the conversation by <THINKER>, <LONGNAME>, in response to the last statement by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
-    This response should be in the style of <THINKER>'s published writing. It should possess <STYLE>. It should also possess a <DISPOSITION> tone.
-    This response should also reflect on the topic conversation in light of the famous artwork, <ART>.  It should make clever connections between this artwork and the topic, perhaps interpreting this artwork symbolically.
-    End by closing the quotation mark.
+  #   <THINKER>: "Let's consider what we have been discussing in light of the artwork's <ARTQUAL>""" 
+  #   prompt_text = prompt_text.replace("<META>",meta_dialogue_instruction)
+  #   prompt_text = prompt_text.replace("<QUESTION>",self.question)
+  #   prompt_text = prompt_text.replace("<RHETGOAL>",random.choice(rhet_goals)) ## must be first
+  #   prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
+  #   prompt_text = prompt_text.replace("<LONGNAME>",self.current_thinker.longname)
+  #   prompt_text = prompt_text.replace("<PREVIOUS_THINKER>",self.previous_thinker.name)
+  #   prompt_text = prompt_text.replace("<STYLE>",self.current_thinker.style)
+  #   prompt_text = prompt_text.replace("<DISPOSITION>",random.choice(self.current_thinker.dispositions))
+  #   prompt_text = prompt_text.replace("<ARTQUAL>",quality)
+  #   return {"prompt":prompt_text,"prefix":prefix}
 
-    <THINKER>: "<PREFIX>""" 
-    prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
-    prompt_text = prompt_text.replace("<LONGNAME>",self.current_thinker.longname)
-    prompt_text = prompt_text.replace("<PREVIOUS_THINKER>",self.previous_thinker.name)
-    prompt_text = prompt_text.replace("<STYLE>",self.current_thinker.style)
-    prompt_text = prompt_text.replace("<DISPOSITION>",random.choice(self.current_thinker.dispositions))
-    prompt_text = prompt_text.replace("<ART>",art)
-    prompt_text = prompt_text.replace("<PREFIX>",prefix)
-    return {"prompt":prompt_text,"prefix":prefix}
+
+  # def _consider_art_secret_prompt(self):
+  #   print('art')
+  #   art = self.artworks.pop(0) ## take first
+  #   self.artworks.append(art) ## and put on end
+  #   prefix = "What you are saying, %s, reminds me of this artwork above us, %s. In this" % (self.previous_thinker.name,art)
+  #   prompt_text = """
+  #   <META>
+
+  #   Write ONLY the next utterance in the conversation by <THINKER>, <LONGNAME>, in response to the last statement by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
+  #   This response should be in the style of <THINKER>'s published writing. It should possess <STYLE>. It should also possess a <DISPOSITION> tone.
+  #   This response should also reflect on the topic conversation in light of the famous artwork, <ART>.  It should make clever, specific connections between this artwork and the topic, perhaps interpreting this artwork symbolically.
+  #   Do not refer to <THINKER> in the 3rd person.  Remember: you ARE <THINKER>.
+  #   200-300 words.
+
+  #   <THINKER>: "<PREFIX>""" 
+  #   prompt_text = prompt_text.replace("<META>",meta_dialogue_instruction)
+  #   prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
+  #   prompt_text = prompt_text.replace("<LONGNAME>",self.current_thinker.longname)
+  #   prompt_text = prompt_text.replace("<PREVIOUS_THINKER>",self.previous_thinker.name)
+  #   prompt_text = prompt_text.replace("<STYLE>",self.current_thinker.style)
+  #   prompt_text = prompt_text.replace("<DISPOSITION>",random.choice(self.current_thinker.dispositions))
+  #   prompt_text = prompt_text.replace("<ART>",art)
+  #   prompt_text = prompt_text.replace("<PREFIX>",prefix)
+  #   return {"prompt":prompt_text,"prefix":prefix}
 
 
   def _elaborate_secret_prompt(self,text):
@@ -257,11 +346,13 @@ class Dialogue:
     prefix = " "+nextword
     prompt_text = """
 
-    (Continue the essay below, adding around 200 to 300 words.
+    (Continue the essay below, adding around 300 to 400 words.
     This response should be in the style of <THINKER>, <LONGNAME>.  It should be in the style of <THINKER>'s published writing, using words that <THINKER> often used. It should possess <STYLE>.  Very important: it should <MODE>.
     In other words, it should be a fake essay by <THINKER>.)
 
     <TEXT><PREFIX>"""
+    prompt_text = prompt_text.replace("<META>",meta_dialogue_instruction)
+    prompt_text = prompt_text.replace("<QUESTION>",self.question)
     prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
     prompt_text = prompt_text.replace("<LONGNAME>",self.current_thinker.longname)
     prompt_text = prompt_text.replace("<STYLE>",self.current_thinker.style)
@@ -273,6 +364,8 @@ class Dialogue:
 
   def _general(self,prompt_text):
     print('general')
+    prompt_text = prompt_text.replace("<META>",meta_dialogue_instruction)
+    prompt_text = prompt_text.replace("<QUESTION>",self.question)
     prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
     prompt_text = prompt_text.replace("<LONGNAME>",self.current_thinker.longname)
     prompt_text = prompt_text.replace("<PREVIOUS_THINKER>",self.previous_thinker.name)
@@ -299,21 +392,16 @@ class Dialogue:
     if (self.current_thinker.is_player==False and self.reader_question==False): ## don't elaborate when player
       if (random.random()<self.current_thinker.chattiness and self.direct_question_asked==False):
         self.elaborate()
-    # while True:
-    #   if self.current_thinker.is_player==True: ## don't elaborate when player
-    #     break
-    #   if (random.random()<self.current_thinker.chattiness and self.direct_question_asked==False):
-    #     self.elaborate()
-    #   else:
-    #     break
-
 
   def generate_next_line(self):
-    if self.current_thinker.is_player==True:
+    if self.current_thinker.is_player==True and self.interrupt==True:
+      self.current_text+='\n\n%s: "%s"' % (self.current_thinker.name,self.interrupt_text)
+      self.interrupt_text=""# reset
+    elif self.current_thinker.is_player==True:
       # print(self.current_text)
       # prepare question using QuestionAsker
-      qa.ingest_text(self.current_text)
-      a_question = qa.question()
+      self.qa.ingest_text(self.current_text)
+      a_question = self.qa.question()
       # set signal to timeout
       #signal.alarm(10) 
       #try:
@@ -330,10 +418,10 @@ class Dialogue:
       else:
         self.reader_question = True
         self.current_text+='\n\n  **Socrates cranes his neck to look at you.**'
-        self.current_text+='\n\nSocrates: "%s, %s"' % ("Reader",a_question)
+        self.current_text+='\n\n**Socrates: "%s, %s"**' % ("Reader",a_question)
         self.current_text+='\n\n  **...**\n  **...**\n  **...**\n'
         self.current_text+='\n\n  **After an awkward interval Socrates is rebuffed by your silence and turns back around**\n\n'
-        self.current_text+='\n\n  **For your own benefit, take a moment to write down your answer in the lines below:**'#\n  **______________________________**\n  **______________________________**\n  **______________________________**\n\n'
+        self.current_text+='\n\n  **For your own benefit, take a moment to write down your answer in the lines below:**\n  **______________________________**\n  **______________________________**\n  **______________________________**\n\n'
         ## don't remember that current_thinker was player
         self.current_thinker = self.previous_thinker  ## this is dubious because but works I think bc next_thinker run soon
 
@@ -344,7 +432,7 @@ class Dialogue:
       real_stub = '\n\n%s: "' % self.current_thinker.name
       if fake_stub["prefix"]!=None:
         real_stub+=fake_stub["prefix"]
-      self.current_text+=real_stub+gpt_interface.gpt3_from_prompt(rdp.decomment_and_snip(self.current_text)+fake_stub['prompt'])
+      self.current_text+=real_stub+gpt_interface.gpt3_from_prompt(rdp.decomment_and_snip(self.current_text)+fake_stub['prompt'],max_tokens=500)
       self._remove_trailing_whitespace() ## clean up
       ### OPTIONAL
       self._possibly_elaborate() ## <-- elaborate, speaker speaks more
@@ -380,7 +468,10 @@ class Dialogue:
 
 
   def next(self):
+    print(colored(self.current_text,"red"))
+    print(colored((self.previous_thinker.name if self.previous_thinker!=None else None ,self.current_thinker.name),'blue'))
     self._next_thinker()    ## change who is talking
+    print(colored((self.previous_thinker.name if self.previous_thinker!=None else None ,self.current_thinker.name),'green'))
     self.reader_question = False  ## has to go after _next_thinker, so maybe should be inside it?
     self.generate_next_line() ## generate the next line
     self._possibly_psychotrope() ## maybe get weird
@@ -389,7 +480,7 @@ class Dialogue:
       self.initial_question_responded = True ## in response to socrates, so he doesn't ask player question immediately
     
 
-  def generate(self,n=3,toxicology_needed=True):
+  def generate(self,n=10,toxicology_needed=True):
     for i in range(n):
       self.next()
       time.sleep(1)
