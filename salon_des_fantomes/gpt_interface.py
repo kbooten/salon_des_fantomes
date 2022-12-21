@@ -7,12 +7,13 @@ import re
 import openai
 openai.api_key = api_key
 
-def gpt3_from_prompt(prompt,temperature=0.9,max_tokens=150,presence_penalty=2.0,frequency_penalty=2.0):
-    openai_json = openai.Completion.create(model="text-davinci-002", prompt=prompt, 
+def gpt3_from_prompt(prompt,temperature=0.9,max_tokens=400,presence_penalty=2.0,frequency_penalty=2.0,model="text-davinci-002",stop=None):
+    openai_json = openai.Completion.create(model=model, prompt=prompt, 
                                 temperature=temperature, 
                                 max_tokens=max_tokens,
                                 presence_penalty=presence_penalty,
                                 frequency_penalty=frequency_penalty,
+                                stop=stop,
                                 )
     choice = openai_json['choices'][0]
     finish_text = choice['text']
