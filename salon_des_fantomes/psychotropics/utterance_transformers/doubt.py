@@ -1,50 +1,23 @@
-import gpt_interface
-
-
 prompt = """
 
-"Adding doubt" is when you take a statement and make it full of expressions of doubt.  
+"Adding doubt and anxiety" is when you take a statement and make it full of expressions of doubt and existential, philosophical anxiety.  
 
-Here is a sentence:
-
-INPUT:"The problem was popularized by René Descartes in the 17th century, resulting in Cartesian dualism, and by pre-Aristotelian philosophers, in Avicennian philosophy, and in earlier Asian traditions." 
-
-Here is an example of "adding doubt" to it:
-
-Output:"The problem may have been popularized by René or was it Ronald Descartes in the 17th century, resulting in Cartesian dualism, I think, maybe, and by pre-Aristotelian philosophers, in Avicennian philosophy though I'm not sure what that is, and in earlier Asian traditions but how much earlier I couldn't say." 
-
-Here is another sentence:
+Examples:
 
 INPUT:"Capital comes initially from circulation, and, moreover, its point of departure is money."
+OUTPUT:"I think maybe capital comes from circulation...but what if it comes from storage capacity?  Or from labor?  My brain is so feeble, my soul so recalcitrant, how would I know if I were wrong."
 
-Here is an example of "adding doubt" to it:
+INPUT:"I have always believed that the realm of suffering, affliction is something quite apart, specific and irreducible."
+OUTPUT:"I have always believed that the realm of suffering, affliction is something quite apart, specific and irreducible.  But maybe we are all always afflicted all the time, and I'm not special at all."
 
-OUTPUT:"I think maybe capital comes from circulation...but what if it comes from storage capacity?  Or from labor?  I could have it all wrong."
+INPUT:"I have always believed that the realm of suffering, affliction is something quite apart, specific and irreducible."
+OUTPUT:"I have always believed that the realm of suffering, affliction is something quite apart, specific and irreducible. Yet why do I write about suffering except to pretend that it is an object that I can see rather than all the dimensions that surround me, and I am its object."
 
-Here is another sentence:
+INPUT: Once I met someone who liked to smell burning hair.  They ended up leaving and moving to Alaska.
+INPUT: Once I met someone who liked to smell burning hair.  They ended up leaving and moving to Alaska.  Though maybe I invented them.  I have no proof of them.  No physical proof, only memories, which of course can be falsified.
 
-INPUT:"I have always believed that the realm of suffering, affliction is something quite apart, specific and irreducible.  But maybe we are all always afflicted all the time, and I'm not special atall."
-
-Here is an example of "adding doubt" to it:
-
-OUTPUT:"In the realm of suffering, affliction (o i wish mine enemies would be turned into rancid pink pink pink smoothies) is something quite apart, specific and irreducible."
-
-Take the following sentence and "add doubt" to it.
+Now add doubt to the input text.
 
 INPUT:"%s"
 
-OUTPUT:"
-
-"""
-
-def add_doubt(input_sentence, prompt=prompt):
-	prompt = prompt % input_sentence
-	return gpt_interface.gpt3_from_prompt(prompt).rstrip('"')
-
-def main():
-    prompt = "The captial of France is Paris, a nice place with many people and lots of art."
-    print(add_doubt(prompt))
-
-if __name__ == '__main__':
-    main()
-
+OUTPUT:"""

@@ -14,7 +14,6 @@ all_characters = persons.get_people()
 # later_drinks = {key:val for key,val in drinks2psycho.items() if val!=None} ## don't start with poison drink
 
 
-
 class DescriptionAdder:
 
     def __init__(self,characters,drinks):
@@ -71,14 +70,15 @@ class DescriptionAdder:
         print(char,bev)
         print("<<")
         if self.drinks[bev]!=None: ### if has psychotropic character
-            if bev not in char.psychotropics: ## first sip, add to dictionary
-                char.psychotropics[bev] = copy(self.drinks[bev])
-            else: ## keep sipping
-                char.psychotropics[bev]["prob"]+=char.psychotropics[bev]["step"] ## increase by step
-            #taste = drinks2psycho[bev]['taste']
-            #self.prepare_drink_statement(char,bev,psy=True,taste=taste)
-            self.prepare_drink_statement(char,bev,psy=True)
-            if self.drinks[bev]['type']=="transform_character":
+            if self.drinks[bev]["type"]=="transform_utterance":
+                if bev not in char.psychotropics: ## first sip, add to dictionary
+                    char.psychotropics[bev] = copy(self.drinks[bev])
+                else: ## keep sipping
+                    char.psychotropics[bev]["prob"]+=char.psychotropics[bev]["step"] ## increase by step
+                #taste = drinks2psycho[bev]['taste']
+                #self.prepare_drink_statement(char,bev,psy=True,taste=taste)
+                self.prepare_drink_statement(char,bev,psy=True)
+            elif self.drinks[bev]['type']=="transform_character":
                 self.drinks[bev]['function'](char) ## transform the character at each sip
         else:
             self.prepare_drink_statement(char,bev)
@@ -90,11 +90,14 @@ class DescriptionAdder:
 
     def simple2(self,char):
         action = random.choice(['adjusts','fondles','creases','brushes something off'])
-        garb = random.choice(['beret','sash','glove','stole','gown','pants','scarf','hood','chain'])
+        if random.random()<.9:
+            garb = random.choice(['sash','glove','gown','pants','pants','pants','shirt','coat','scarf','cloak','hood','vest','sleeve','sleeve','collar'])
+        else:
+            garb =  random.choice(['chain','snood','wimple','cravat','khimar','cilice','carapace','rekel','alb','surcingle','antarvāsa','uttarāsaṅga'])
         return "%s %s their %s." % (char,action,garb)
 
     def simple3(self,char):
-        if random.random()<.4:
+        if random.random()<.9:
             action = random.choice(['yawns','leans forward','blinks','leans back','rocks agitatedly','snorts','smiles'])
         else:
             action = random.choice(['pulses','levitates up','levitates in','transmutates','beta-decays', 'colliderates','spalls','pionizes','urfshs','arcawints', 'eyo\'onts','yellowcakes out', 'map-merges', 'radixes', 'listens down'])

@@ -1,22 +1,32 @@
 import random,time,re
 
-def transform_text(text,transformation,probability_of_transformation,max=3):
+from gpt_interface import gpt3_from_prompt#,gpt3_edit
+
+def transform(text, prompt):
+    prompt = prompt % text
+    return gpt3_from_prompt(prompt)
+
+
+def transform_text(text,prompt,probability_of_transformation,max=3):
     c = 0
     while probability_of_transformation>0 and c<max:
-        probability_of_transformation-=1.0
-        if random.random()>probability_of_transformation:
-            text = transformation(text)
+        if random.random()<probability_of_transformation:
+            #text = gpt3_edit(text,instruction)
+            text = transform(text,prompt)
+            print('transforming')
+            time.sleep(.3)
+            print(text)
+        else:
+            break
         c+=1
-        print('transforming')
-        time.sleep(.5)
-        print(text)
+        probability_of_transformation-=1.0 ## decrement (maybe by less)
     return text
 
 def main():
-    from psychotropics.odd_parenthetical import add_odd_parenthetical
-    test_text = "This is just a test text. I'm just trying to see if this function works."
+    from psychotropics.utterance_transformers import expand_into_simple_words as pt 
+    test_text = "Once I met someone who liked to smell burning hair.  They ended up leaving and moving to Alaska."
     #transformation_probability_tuples = [(add_odd_parenthetical,2.3)]
-    text = transform_text(test_text,add_odd_parenthetical,1.0) 
+    text = transform_text(test_text,pt.prompt,2.0) 
     print(text)
 
 if __name__ == '__main__':

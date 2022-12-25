@@ -1,7 +1,15 @@
 import gpt_interface
 
 
-prompt = """
+# instruction = """
+# """
+instructions = """
+
+Take the input and add an "odd parenthetical statement" to it that is perverse and negative, angry perhaps sexual, and very ungrammatical, perhaps with repetition.  It should be creative and new new weird words having to do with technology, food, and the body.  An odd parenthetical statement is surrounded by parentheses. 
+
+Important: if it already has one or more "odd parentehtical statements," add anothers. 
+
+Examples:
 
 An "odd parenthetical statement" is one that reveals a secret desire, an angry wish, or a neurotic impulse.  It begins "o." It can be vulgar and perverse.  Often it is ungrammatical.
 
@@ -33,22 +41,6 @@ OUTPUT:"In the realm of suffering, affliction (o i wish mine enemies would be tu
 
 Notice that this expresses a vulgar anger. 
 
-Take the following sentence and add an "odd parenthetical statement" to it that is perverse and negative, angry perhaps sexual, and very ungrammatical, perhaps with repetition.  It should be creative and new new weird words having to do with technology, food, and the body.
-
-INPUT:"%s"
-
-OUTPUT:"
 
 """
-
-def add_odd_parenthetical(input_sentence, prompt=prompt):
-	prompt = prompt % input_sentence
-	return gpt_interface.gpt3_from_prompt(prompt).rstrip('"')
-
-def main():
-    prompt = "The captial of France is Paris, a nice place with many people and lots of art."
-    print(add_odd_parenthetical(prompt))
-
-if __name__ == '__main__':
-    main()
 

@@ -1,5 +1,0 @@
-juan_crystalize = """
-
-
-
-"""
