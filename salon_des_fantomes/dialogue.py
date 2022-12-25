@@ -417,11 +417,7 @@ class Dialogue:
       self._generate_next_text()
 
   def _possibly_psychotrope(self):
-    # print(self.current_thinker)
-    # print(self.current_thinker.psychotropics)
     for psy in self.current_thinker.psychotropics:
-      # print("attempting transform")
-      # print(psy)
       last_utterance = rdp.excerpt_last_utterance(self.current_text)
       transformed = psytransform.transform_text(last_utterance,self.current_thinker.psychotropics[psy]['function'],self.current_thinker.psychotropics[psy]['prob'])
       self.current_text = rdp.replace_last_instance(self.current_text,last_utterance,transformed)
