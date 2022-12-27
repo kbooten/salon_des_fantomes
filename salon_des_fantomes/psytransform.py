@@ -3,16 +3,15 @@ import random,time,re
 from gpt_interface import gpt3_from_prompt#,gpt3_edit
 
 def transform(text, prompt):
-    prompt = prompt % text
-    return gpt3_from_prompt(prompt)
+    prompt = prompt % text ## replaces '%s' in prompt, adds prefix character
+    return gpt3_from_prompt(prompt,stop=">")
 
 
 def transform_text(text,prompt,probability_of_transformation,max=3):
     c = 0
     while probability_of_transformation>0 and c<max:
         if random.random()<probability_of_transformation:
-            #text = gpt3_edit(text,instruction)
-            text = transform(text,prompt)
+            text = transform(text,prompt,stop=">")
             print('transforming')
             time.sleep(.3)
             print(text)

@@ -6,10 +6,11 @@ import re
 
 def main():
 	file = 'answer_questions.txt'
-	with open('answer_questions.txt','r') as f:
+	with open(file,'r') as f:
 		data = f.read()
 	pairs = re.split(r"\n{2,}",data)
 	pairs = [re.split(r"\n",p) for p in pairs]
+	print(pairs)
 	pairs = [(a.strip(),q.strip()) for q,a in pairs] ## cleaning
 	pairs = [(" "+a+"%%%"," "+q+"|||") for q,a in pairs] ## adding special characters to help model
 	pairs = [(a.replace('"','\\"'),q.replace('"','\\"')) for a,q in pairs] ## adding special characters to help moded

@@ -1,7 +1,13 @@
 from taste_funcs import *
 
-from psychotropics import utterance_transformers
-from psychotropics import character_transformers
+from psychotropics.utterance_transformers import odd_parenthetical
+from psychotropics.utterance_transformers import doubt
+from psychotropics.utterance_transformers import expand_into_simple_words
+from psychotropics.utterance_transformers import juan
+from psychotropics.character_transformers import light_lucience
+
+
+
 
 drinks2psycho = {
     "water":None,
@@ -16,7 +22,7 @@ drinks2psycho = {
     "scotch":None,
     "brandy":None,
     "1961 Pétrus":{
-                    "function":utterance_transformers.add_odd_parenthetical,
+                    "function":odd_parenthetical,
                     "type":"transform_utterance",
                     "prob":0.9,
                     "step":0.02,
@@ -24,7 +30,7 @@ drinks2psycho = {
                     "chem":"bisephontinol-3",
                     },
     "1950 Château Lafleur":{
-                    "function":utterance_transformers.add_doubt,
+                    "function":doubt,
                     "type":"transform_utterance",
                     "prob":0.9,
                     "step":0.3,
@@ -33,7 +39,7 @@ drinks2psycho = {
                     },
 
     "1962 La Tâche":{
-                    "function":utterance_transformers.expand_into_simple_words,
+                    "function":expand_into_simple_words,
                     "type":"transform_utterance",
                     "prob":0.9,
                     "step":0.3,
@@ -42,7 +48,7 @@ drinks2psycho = {
                     },
 
     "1996 Haut-Brion Blanc":{
-                    "function":character_transformers.juan_crystalsmith,
+                    "function":juan,
                     "type":"transform_utterance",
                     "prob":0.9,
                     "step":0.3,
@@ -51,7 +57,7 @@ drinks2psycho = {
                     },
 
     "1997 HCHANGE":{
-                    "function":character_transformers.juan_crystalsmith,
+                    "function":light_lucience,
                     "type":"transform_character",
                     "prob":0.9,
                     "step":0.3,

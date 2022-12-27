@@ -134,9 +134,9 @@ class Dialogue:
     1. Important!: It should give detailed philosophical reasons and specific rationale for agreeing or disagreeing.
     2. Important!: It should be in the style of <THINKER>'s published writing.
     3. Important!: It should also possess a VERY <DISPOSITION> tone and should feature <STYLE>.
-    5. Important!: It should include the word <KEYWORD> in the first one or two sentences. 
+    5. Important!: It should include the word <KEYWORD> somewhere.
     6. Important!: It should not repeat itself OR ANY PREVIOUS SENTENCES UTTERED BY THIS OR OTHER CHARACTERS. Each sentence should offer a new idea.
-    7. Important!: 100-300 words.
+    7. Important!: It should be 3 to 4 sentences, not just 1 sentence.
     8. Important!: It should express a strange, counter-intuitive opinion that is charateristic of <THINKER> uniquely, not a general one that many people might hold.
 
     Ok, now complete the dialogue, ending with punctuation and then the > symbol.
@@ -261,7 +261,9 @@ class Dialogue:
     ***
     Write ONLY the next utterance in the conversation by <THINKER>, <LONGNAME>, in response to the last statement by <PREVIOUS_THINKER>, giving detailed philosophical reasons and specific rationale for agreeing or disagreeing.
     This response should be in the style of <THINKER>'s published writing. It should possess <STYLE>. It should also possess a <DISPOSITION> tone.
-    This response should also reflect on the topic conversation in light of the famous artwork, <ART>.  It should make clever, specific connections between this artwork and the topic, perhaps interpreting this artwork symbolically.
+    This response should also reflect on the topic conversation in light of the famous artwork, <ART>. 
+    Your response should make clever, specific connections between this artwork and the topic, perhaps interpreting this artwork symbolically.
+    It should refer to actual details from this artwork, not ones that you make up. Do not invent aspects of the artwork that are not real.  
     Do not refer to <THINKER> in the 3rd person.  Remember: you ARE <THINKER>.
     200-300 words.  Make sure at the end you have punctuation and then the > symbol.
 
@@ -286,7 +288,7 @@ class Dialogue:
     prompt_text = """
 
     (Continue the essay below, adding around 300 to 400 words.
-    This response should be in the style of <THINKER>, <LONGNAME>.  It should be in the style of <THINKER>'s published writing, using words that <THINKER> often used. It should possess <STYLE>.  Very important: it should <MODE>.
+    This response should be in the style of <THINKER>, <LONGNAME>.  It should be in the style of <THINKER>'s published writing, using words that <THINKER> often used. It should possess <STYLE>.
     In other words, it should be a fake essay by <THINKER>.)
 
     <TEXT> <PREFIX>"""
@@ -294,7 +296,7 @@ class Dialogue:
     prompt_text = prompt_text.replace("<THINKER>",self.current_thinker.name)
     prompt_text = prompt_text.replace("<LONGNAME>",self.current_thinker.longname)
     prompt_text = prompt_text.replace("<STYLE>",self.current_thinker.style)
-    prompt_text = prompt_text.replace("<MODE>",mode)
+    #prompt_text = prompt_text.replace("<MODE>",mode)
     prompt_text = prompt_text.replace("<TEXT>",text)
     prompt_text = prompt_text.replace("<PREFIX>",prefix)
     return {"prompt":prompt_text,"prefix":prefix}
@@ -319,7 +321,7 @@ class Dialogue:
     if fake_stub["prefix"]!=None:
       self.current_text+=fake_stub["prefix"]
     elaboration_text = gpt_interface.gpt3_from_prompt(fake_stub['prompt'],max_tokens=600,stop=">")
-    #self.current_text += elaboration_text
+    self.current_text += elaboration_text
     rdp.simple_regex_heal(self.current_text) ## always heal after elaboration in case something got messed up
 
   def _possibly_elaborate(self):
@@ -338,7 +340,7 @@ class Dialogue:
     if len(player_text)!=0: 
       self.current_text+='\n\nSocrates: <%s, %s>' % (self.current_thinker.name,a_question)
       self.current_text+='\n\n%s: <%s>' % (self.current_thinker.name,player_text)
-      if player_text.rstrip().endswith("?"):
+      if player_text.rstrip().endswith("?>"):
         self.direct_question_asked =True
     else:
       self.reader_question = True
@@ -417,10 +419,16 @@ class Dialogue:
       self._generate_next_text()
 
   def _possibly_psychotrope(self):
-    for psy in self.current_thinker.psychotropics:
+    psychotropics = self.current_thinker.psychotropics
+    random.shuffle(psychotropics)
+    for psy in psychotropics:
       last_utterance = rdp.excerpt_last_utterance(self.current_text)
-      transformed = psytransform.transform_text(last_utterance,self.current_thinker.psychotropics[psy]['function'],self.current_thinker.psychotropics[psy]['prob'])
-      self.current_text = rdp.replace_last_instance(self.current_text,last_utterance,transformed)
+      if psy['type']=="transform_utterance": ## uses gpt
+        transformed = psytransform.transform_text(last_utterance,self.current_thinker.psychotropics[psy]['function'],self.current_thinker.psychotropics[psy]['prob'])
+        self.current_text = rdp.replace_last_instance(self.current_text,last_utterance,transformed)
+      elif psy['type']=="transform_utterance_simple":
+        transformed = psy.transform(transformed)
+        self.current_text = rdp.replace_last_instance(self.current_text,last_utterance,transformed)
 
 
   def _possibly_describe(self):

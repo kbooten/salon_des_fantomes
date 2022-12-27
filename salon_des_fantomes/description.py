@@ -58,10 +58,10 @@ class DescriptionAdder:
             if random.random()<.23:
                 text += "\n"+random.choice([
                                     "  **Was it supposed to taste like this?**",
-                                    "  **And it was cloudy.**",
-                                    "  **An unfamiliar pulse in the cerebelum.**",
-                                    "  **A flicker of nausea, easy to ignore.**",
-                                    "  **Immediate lightheadedness. Not entirely pleasant.**"])+"\n"
+                                    "  **And sore turbid it was.**",
+                                    "  **An unfamiliar pinching in the cerebelum.**",
+                                    "  **A micropump of nausea, easy to ignore.**",
+                                    "  **Immediate leftheadedness. Not entirely pleasant.**"])+"\n"
         self.prepared_text += text ### adds text
 
     def make_character_drink(self,char):
@@ -90,14 +90,14 @@ class DescriptionAdder:
 
     def simple2(self,char):
         action = random.choice(['adjusts','fondles','creases','brushes something off'])
-        if random.random()<.9:
+        if random.random()<.95:
             garb = random.choice(['sash','glove','gown','pants','pants','pants','shirt','coat','scarf','cloak','hood','vest','sleeve','sleeve','collar'])
         else:
             garb =  random.choice(['chain','snood','wimple','cravat','khimar','cilice','carapace','rekel','alb','surcingle','antarvāsa','uttarāsaṅga'])
         return "%s %s their %s." % (char,action,garb)
 
     def simple3(self,char):
-        if random.random()<.9:
+        if random.random()<.95:
             action = random.choice(['yawns','leans forward','blinks','leans back','rocks agitatedly','snorts','smiles'])
         else:
             action = random.choice(['pulses','levitates up','levitates in','transmutates','beta-decays', 'colliderates','spalls','pionizes','urfshs','arcawints', 'eyo\'onts','yellowcakes out', 'map-merges', 'radixes', 'listens down'])

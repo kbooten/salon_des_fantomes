@@ -13,6 +13,8 @@ def get_question_about_statement(statement,prompt_suffix="%%%",completion_suffix
 
 def main():
 	statement = "Based on making people more engaged with their body and their space, I think that cars should be illegal."
+	statement = "When Latvia took over the world, I respected that."
+	
 	print(get_question_about_statement(statement))
 
 if __name__ == '__main__':
