@@ -2,23 +2,41 @@ import random
 
 class Person:
 
-  def __init__(self,name):
-    self.name = name
-    self.is_player = False
-    self.beverage = None
-    self.psychotropics = {
-            ##"function"
-        }
-    self.continue_drink_probability = random.random()
-    self.ideas = None
+    def __init__(self,name):
+        self.name = name
+        self.is_player = False
+        self.beverage = None
+        self.psychotropics = {
+                ##"function"
+            }
+        self.continue_drink_probability = random.random()
+        self.ideas = None
 
-  def __repr__(self):
-    return "%s(%s)" % (self.__class__,self.name)
+    def __repr__(self):
+        return "%s(%s)" % (self.__class__,self.name)
 
-  def change_disposition(self):
-    popped_dis = self.dispositions.pop(0)
-    self.dispositions.append(popped_dis) ## back of line
-    self.current_disposition = self.dispositions[0] ## new zeroeth
+    def change_disposition(self):
+        popped_dis = self.dispositions.pop(0)
+        self.dispositions.append(popped_dis) ## back of line
+        self.current_disposition = self.dispositions[0] ## new zeroeth
+
+    def get_unique_key_words(self,n=2):
+        """
+        get n unique words from list
+        """
+        words = self.words
+        random.shuffle(words)
+        random_words = []
+        for w in words:
+            if w not in random_words:
+                random_words.append(w)
+            if len(random_words)==n:
+                return random_words
+        raise Exception("not enough unique words") 
+
+
+
+
 
 from data import characters
 chars = characters.characters

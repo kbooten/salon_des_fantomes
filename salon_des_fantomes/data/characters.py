@@ -6,7 +6,7 @@ characters = {
 		"quotes":"player.txt",
 		"chattiness":None,
 		"curiosity":None,
-		"words":["mercy","anaphrasis"],
+		"words":None,
 		"dispositions":None,
 		"style":None,
 		"modes":None
@@ -45,7 +45,7 @@ characters = {
 		"curiosity":.1,
 		"words":["Sorge","ready-to-hand","facticity","challenges forth","primal truth","revealing","Enframing conceals","man's essence","destining","Dasein","Dasein","Dasein","Dasein","Dasein","Dasein","Dasein","Dasein","being","Dasein","authenticity","ontology","phenomenology","hermeneutics","existence","temporality","care"," fallenness","resoluteness","Eigentlichkeit","solitude","death","letting-be","Being-towards-death","authentic","inauthentic","world","earth","clearing","enframing","equipmentality"," ready-to-hand","present-at-hand","thrownness","facticity","aletheia","unconcealment","authentic self-hood"," disclosedness","disclosure","hiddenness","oblivion","pre-Socratics","Greek","ontic","ontological"],
 		"dispositions":["grumpy","serious","wistful","confusing"],
-		"style":"confusing sentences with German words",
+		"style":"long, confusing sentences in English but with untranslated German words representing philosophical concepts",
 		"modes":["describe the nature of man","take pains to clarify his point"]
 	},
 
@@ -56,7 +56,7 @@ characters = {
 		"curiosity":.4,
 		"words":["id", "ego", "superego", "anal", "oral", "phallic", "castration", "penis", "vagina", "libido", "fetish", "transference", "countertransference", "repression", "resistance", "neurosis", "psychosis", "hysteria", "paranoia", "obsession", "compulsion", "dream", "displacement", "symbol", "sublimation", "projection", "rationalization", "reaction formation"],
 		"dispositions":["extremely excited due to lots of cocaine","droll","bored","humorous","romantic","naughty","horny","repressed"],
-		"style":"clear sentences",
+		"style":"arcane, with references to the mind and to strange and perverse things that people do",
 		"modes":["describe the strange symptoms of a psychoanalytic patient","describe a dream he had","describe a word he forgot"]
 	},
 
@@ -78,12 +78,12 @@ characters = {
 		"curiosity":.2,
 		"words":["rifle","rifles","cadre","anti-rightist","big-character poster","capitalist roader","rustication","rusticated","peasant", "class struggle", "proletariat", "bourgeoisie", "comrade", "imperialism", "feudalism", "land", "exploitation", "socialism", "communism", "capitalism", "dictatorship of the proletariat", " Chairman Mao", "Great Leap Forward", "Cultural Revolution", "Red Guards", "People's Commune", "Little Red Book"],
 		"dispositions":["militant","self-aggrandizing","serious","flirtatious","violent","poetic"],
-		"style":"clear sentences",
+		"style":"poetic and violent",
 		"modes":["excoriate the other guests for being counterrevolutionary",]
 	},
 
 	"Nietzsche":{
-		"longname":"the philosopher who hates Christianity, which he sees as a slave-morality",
+		"longname":"the philosopher who hates Christianity, which he sees as a slave-morality, and instead values vitality and strength",
 		"quotes":"nietzsche.txt",	
 		"chattiness":.3,
 		"curiosity":.0,
@@ -122,7 +122,7 @@ characters = {
 		"curiosity":.3,
 		"words": ['individual','laissez-faire','socialism','capitalism','human action','calculation problem','catallactics','entrepreneurship'],
 		"dispositions":["stern","imaginative"],
-		"style":"sarcastic",
+		"style":"sarcastic and blunt",
 		"modes":["argue in favor of classical liberalism","describe the evils of socialism"]
 	},
 
@@ -144,7 +144,7 @@ characters = {
 		"curiosity":0.02,
 		"words": ["total depravity","depravity of men","sin"],
 		"dispositions":["stern"],
-		"style":"extremely long sentences with lots of clauses and commas",
+		"style":"extremely long sentences with lots of clauses and commas and references to the Bible",
 		"modes":["try to explain everything in terms of scientifically-observable processes"]
 	},
 
@@ -155,7 +155,7 @@ characters = {
 		"curiosity":0.0,
 		"words": ["SCUM",".22",".38","Maurice Girodias"],
 		"dispositions":["charismatic","narcissistic"],
-		"style":"extremely long sentences with lots of clauses and commas",
+		"style":"extremely weird",
 		"modes":["try to explain everything in terms of scientifically-observable processes"]
 	},
 
@@ -302,7 +302,7 @@ characters = {
 		"curiosity":.1,
 		"words": ["intelligence","fluid intelligence","STEM skills","internship","human capital","successful","I have a certificate in"],
 		"dispositions":["self-hating","other-hating"],
-		"style":"trying to impress people with references to fancy institutions she has attended or worked for",
+		"style":"",
 		"modes":["describing her educational background"]
 	},
 

@@ -17,19 +17,6 @@ import time # for file naming
 
 import dill as pickle
 
-
-## using signal for timeout on user input
-import signal
-#
-class AlarmException(Exception): # https://stackoverflow.com/q/27013127, https://stackoverflow.com/a/27014090, https://stackoverflow.com/a/494273
-    pass
-#
-def signal_handler(signum, frame):
-  raise AlarmException("user took to long")
-#
-signal.signal(signal.SIGALRM, signal_handler)
-
-
 class Salon:
 
   def __init__(self,questions,characters,drinks):
@@ -159,27 +146,13 @@ def main():
   s = Salon(questions,characters,drinks.drinks2psycho)
   while True:
     s.new_dialogue()
-    #s.maybe_add_psychotropic_drink()
     s.try_to_pickle_characters()
-    # set signal to timeout
-    signal.alarm(10)
-    try:
-      user_input = input("quit (q) or pause (p), or any key to continue>")
-      if user_input=="p": # pause
-        signal.alarm(0)
-        input("paused. hit ENTER to keep going.")
-      elif user_input == "q":
-        print("quitting")
-        break
-      else:
-        signal.alarm(0)
-        pass
-    except:
-      signal.alarm(0)
-      pass
     s.maybe_change_character_emotions()
-
-    
+    print("maybe adjust drinks?")
+    user_input = input("quit (q) or ENTER to continue>")
+    if user_input == "q":
+        print("bye bye")
+        break
 
 if __name__ == '__main__':
   main()

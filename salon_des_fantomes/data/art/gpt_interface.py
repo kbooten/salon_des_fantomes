@@ -53,8 +53,6 @@ def general_clean(text):
     text = re.sub(r' {2,}',' ',text)#text.replace("  "," ")
     text = text.rstrip(" \n")
     text = text.replace("\n"," ")
-    # if text.endswith(">")==False:
-    #     text+=">"
     return text
 
 def main():
