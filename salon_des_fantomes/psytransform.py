@@ -7,18 +7,11 @@ def transform(text, prompt,stop=">"):
     return gpt3_from_prompt(prompt,stop=stop)
 
 
-def transform_text(text,prompt,probability_of_transformation,max=3):
-    c = 0
-    while probability_of_transformation>0 and c<max:
-        if random.random()<probability_of_transformation:
-            text = transform(text,prompt)
-            print('transforming')
-            time.sleep(.3)
-            print(text)
-        else:
-            break
-        c+=1
-        probability_of_transformation-=1.0 ## decrement (maybe by less)
+def transform_text(text,prompt,probability_of_transformation):
+    if random.random()<probability_of_transformation:
+        text = transform(text,prompt)
+        print('transforming')
+        time.sleep(.3)
     return text
 
 def main():

@@ -3,7 +3,7 @@ import gpt_interface
 
 # instruction = """
 # """
-prompt = """Take the input and add an "odd parenthetical statement" to it that hints at a strange libidinal desire or wish, that one would be afraid to express in public. It should be creative and contain weird words having to do with organs, machines, relationships, fragrances, and bodily desires.  It should connect in some way to the text it comes after.  It could contain lots of rhyme and alliteration. An odd parenthetical statement is surrounded by parentheses.  It should just express the perverse desire, not actually use words like "desire" or "perverse."
+prompt = """Take the input and add one or two "odd parenthetical statements" to it that hints at a strange libidinal desire or wish, that one would be afraid to express in public. It should be creative and contain weird words having to do with organs, machines, relationships, fragrances, and bodily desires.  It should connect in some way to the text it comes after.  It could contain lots of rhyme and alliteration. An odd parenthetical statement is surrounded by parentheses.  It should just express the perverse desire, not actually use words like "desire" or "perverse," and not be violent.
 
 Important: if it already has one or more "odd parenthetical statements," add anothers recursively (one inside the other). 
 
@@ -22,7 +22,7 @@ OUTPUT: <Capital comes initially from circulation, and, moreover, its point of d
 Another example:
 
 INPUT: <Capital comes initially from circulation, and, moreover, its point of departure is money.>
-OUTPUT: <Capital comes initially from circulation (of my green blood, mmmm mm funk like chypre smoothe) and, moreover, its point of departure is money.>
+OUTPUT: <Capital comes initially from circulation (of my green blood, mmmm mm funk like chypre smoothie) and, moreover, its point of departure is money.>
 
 Here is another example, this one expressing vulgar anger:
 

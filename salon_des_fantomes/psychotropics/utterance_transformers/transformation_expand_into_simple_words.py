@@ -25,17 +25,13 @@ OUTPUT: <I went to my wheel-box.>
 
 Notice that one word---"car"---became two one-syllable  words---"wheel-box."  And a car is sort of a "wheel-box" because it is a container with wheels, so this "simplification-hypthenation" makes sense.
 
-If the input text already has a "simplification-hyphenation," you can either transform another word like this:
-
 INPUT: <I went to my wheel-box.>
 OUTPUT: <I straight-swooped to my wheel-box.>
-
-But you can also transform a "simplification-hyphenation" that is already in the input text:
 
 INPUT: <I went to my wheel-box.>
 OUTPUT: <I went to my wheel-square-cave.>
 
-Now complete this one. And, remember, the general format of a simplification-hyphenation is "A-B" where A and B are both single-syllable words, not any more syllables than that.
+Now complete this text, adding at least one six simplification-hyphenations in each sentence in the text. And, remember, the general format of a simplification-hyphenation is "A-B" where A and B are both single-syllable words, not any more syllables than that.
 
 INPUT:<%s>
 OUTPUT:<"""

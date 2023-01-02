@@ -14,12 +14,6 @@ OUTPUT: <I'm going to the store to buy plants, like Juan Crystalsmith's favorite
 INPUT: <And that's the reason I think that blue is a sweeter color than green.  What do you think?>  
 OUTPUT: <And that's the reason I think that blue, especially the blue of Juan Crystalsmith's lips as he destroyed entropy, is a sweeter color than green.  What do you think?>
 
-If there are already references to Juan Crystalsmith in the input text, add more. 
-
-INPUT: <And that's the reason I think that blue, especially the blue of Juan Crystalsmith's lips as he destroyed entropy, is a sweeter color than green.  What do you think?>
-OUTPUT: <And that's the reason I think that blue, especially the blue of Juan Crystalsmith's lips as he destroyed entropy, is a sweeter color than green, the green of the gangrene Juan Crystalsmith turned to perfumed bronze.  What do you think?>
-
-
 INPUT:<%s>
 
 OUTPUT:<"""

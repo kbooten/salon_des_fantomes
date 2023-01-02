@@ -12,9 +12,9 @@ INPUT: <I have always believed that the realm of suffering, affliction is someth
 OUTPUT: <I have always believed that the realm of suffering, affliction is something quite apart, specific and irreducible. Yet why do I write about suffering except to pretend that it is an object that I can see rather than all the dimensions that surround me, and I am its object.>
 
 INPUT: <Once I met someone who liked to smell burning hair.  They ended up leaving and moving to Alaska.>
-INPUT: Once I met someone who liked to smell burning hair.  They ended up leaving and moving to Alaska.  Though maybe I invented them.  I have no proof of them.  No physical proof, only memories, which of course can be falsified.>
+INPUT: <Once I met someone who liked to smell burning hair.  They ended up leaving and moving to Alaska.  Though maybe I invented them.  I have no proof of them.  No physical proof, only memories, which of course can be falsified.>
 
-Now add doubt to the input text.
+Now add doubt throughout input text.
 
 INPUT: <%s>
 

@@ -1,27 +1,18 @@
 import random
 from copy import copy
+import re
 
 import persons
 all_characters = persons.get_people()
 
-# from psychotropics.utterance_transformers.odd_parenthetical import add_odd_parenthetical
-# from psychotropics.utterance_transformers.doubt import add_doubt
-# from psychotropics.transformers import light_lucience
-# from psychotropics.prompts import juan_crystalsmith
-
-
-# starting_drinks = {key:val for key,val in drinks2psycho.items() if val==None} ## don't start with poison drink
-# later_drinks = {key:val for key,val in drinks2psycho.items() if val!=None} ## don't start with poison drink
-
-
 class DescriptionAdder:
 
     def __init__(self,characters,drinks):
-        self.drink_prob = .2
+        self.drink_prob = .6
+        self.simple_description_prob = .2
         self.characters = characters
         self.prepared_text = ""
         self.drinks = drinks
-        #self.set_drinks()
         self.set_character_drinks()
 
 
@@ -33,28 +24,31 @@ class DescriptionAdder:
                 text+="  *-------within normal range*\n"
             else:
                 for psy in char.psychotropics:
-                    chem = self.drinks[psy]['chem']
+                    #chem = self.drinks[psy]['chem']
+                    chem = self.drinks[psy]['function']
                     permillion = int(self.drinks[psy]['prob'] * 10)
-                    text+="  *-------%s: %d parts per million*\n" % (chem,permillion)
+                    chemline = "%s" % chem
+                    #chemline = "  *-------%s: %d parts per million*\n" % (chem,permillion)
+                    #chemline = re.findall(r'(?:<.+\/)([a-zA-Z_]+.py)(?:\'>)',chemline)[0]
+                    #chemline_full = "  *-------%s: %d parts per million*\n" % (chemline,permillion)
+                    text+=chemline_full
         return text
 
     def set_character_drinks(self):
         ## choose drink, maybe sticking with previous drink
         for char in self.characters:
-            if char.beverage==None: ## 
+            if (char.is_player==True or char.name=="Socrates"):
+                char.beverage = random.choice([bev for bev in self.drinks if self.drinks[bev]==None]) ## player always drinks something non-psycho
+            elif char.beverage==None: ## 
                 char.beverage = random.choice(list(self.drinks))
             else: 
-                if random.random()<char.continue_drink_probability: ## possibly change drink
+                if random.random()<char.curiosity: ## possibly change drink
                     char.beverage = random.choice(list(self.drinks))
             print(char,char.beverage)
 
     def prepare_drink_statement(self,char,bev,psy=False,taste=None):
         text = "\n\n  **%s takes a sip of %s.**" % (char.name,bev)
         if psy==True:
-            #text += "  **It tasted like %s.**\n" % random.choice(taste)
-            # next_taste = drinks2psycho[bev]['cfg'].my_next() ## tick through the cfg
-            next_taste = self.drinks[bev]['taste_func']()#()#.my_next()
-            text += "\n  **It tastes like %s.**" % next_taste#random.choice(taste)
             if random.random()<.23:
                 text += "\n"+random.choice([
                                     "  **Was it supposed to taste like this?**",
@@ -70,16 +64,24 @@ class DescriptionAdder:
         print(char,bev)
         print("<<")
         if self.drinks[bev]!=None: ### if has psychotropic character
+            ## add to dictionary
+            if bev not in char.psychotropics: ## first sip, add to dictionary
+                char.psychotropics[bev] = copy(self.drinks[bev])
+            else: ## keep sipping
+                char.psychotropics[bev]["prob"]+=char.psychotropics[bev]["step"] ## increase by step
+            ## either use now or save for later
             if self.drinks[bev]["type"]=="transform_utterance":
-                if bev not in char.psychotropics: ## first sip, add to dictionary
-                    char.psychotropics[bev] = copy(self.drinks[bev])
-                else: ## keep sipping
-                    char.psychotropics[bev]["prob"]+=char.psychotropics[bev]["step"] ## increase by step
-                #taste = drinks2psycho[bev]['taste']
-                #self.prepare_drink_statement(char,bev,psy=True,taste=taste)
                 self.prepare_drink_statement(char,bev,psy=True)
-            elif self.drinks[bev]['type']=="transform_character":
-                self.drinks[bev]['function'](char) ## transform the character at each sip
+            elif self.drinks[bev]['type']=="transform_character_words":
+                char.words.append(self.drinks[bev]['function']())
+                input(char.words) ## debugging
+            elif self.drinks[bev]['type']=="transform_character_modes":
+                char.modes.append(self.drinks[bev]['function']())
+                input(char.modes)
+            elif self.drinks[bev]['type']=="transform_character_dispositions":
+                char.dispositions.append(self.drinks[bev]['function']())
+                input(char.dispositions)
+
         else:
             self.prepare_drink_statement(char,bev)
 
@@ -104,18 +106,13 @@ class DescriptionAdder:
 
         return "%s %s." % (char,action)
 
-    def simple_description(self):
-        c = 0
-        chars = [c.name for c in self.characters]
-        random.shuffle(chars)
-        for char in chars:
-            if random.random()<.2:
-                simplefunc = random.choice([
-                        self.simple1,
-                        self.simple2,
-                        self.simple3
-                    ])
-                self.prepared_text+="\n\n  **%s**\n" % simplefunc(char)
+    def simple_description(self,char):
+        simplefunc = random.choice([
+                self.simple1,
+                self.simple2,
+                self.simple3
+            ])
+        self.prepared_text+="\n\n  **%s**\n" % simplefunc(char.name)
 
 
     def flush_text(self):
@@ -127,8 +124,8 @@ class DescriptionAdder:
         char = random.choice(self.characters)
         if random.random()<self.drink_prob:
             self.make_character_drink(char)
-        else:
-            self.simple_description()    
+        elif random.random()<self.simple_description_prob:
+            self.simple_description(char)    
 
 def main():
     d = DescriptionAdder(all_characters,drinks2psycho)
