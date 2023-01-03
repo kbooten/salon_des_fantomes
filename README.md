@@ -1,1 +1,1 @@
-An enlivening conversation with the dead. 
+A dialogic experience called Salon Des Fantômes.
