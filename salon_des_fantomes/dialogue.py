@@ -493,4 +493,6 @@ This question should <RHETGOAL>.  50 to 100 words.
             self.next()
         if toxicology_needed==True:
             self.add_toxicology_report()
+        print(colored(self.current_text,"green"))
+        print("")
 
