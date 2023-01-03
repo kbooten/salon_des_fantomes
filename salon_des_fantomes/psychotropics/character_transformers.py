@@ -34,6 +34,23 @@ def word_dasani():
 	chosen = random.choice(phrases)
 	return chosen
 
+###
+
+def word_on_indolence():
+	lines = [
+		"one behind the other stepp'd serene in placid sandals",
+		"they pass'd, like figures on a marble urn",
+		"How is it, Shadows! that I knew ye not?",
+		"How came ye muffled in so hush a mask?",
+		"leave my sense unhaunted quite of all but — nothingness?",
+		"They faded, and, forsooth! I wanted wings",
+		"O Shadows!",
+		"Ghosts, adieu! Ye cannot raise my head cool-bedded",
+		"Farewell! I yet have visions for the night",
+		"Vanish, ye Phantoms! from my idle spright",
+	]
+	return random.choice(lines)
+
 
 ###
 
@@ -122,6 +139,7 @@ def main():
 	print(word_new_ideology())
 	print(word_new_concept())
 	print(word_meta_gesture())
+	print(word_on_indolence())
 	print(mode_juan())
 	print(mode_self_abnegation())
 

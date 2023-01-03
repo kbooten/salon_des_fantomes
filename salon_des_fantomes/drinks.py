@@ -85,6 +85,13 @@ drinks2psycho = {
                     "step":step
                     },
 
+    "a draught of vintage!":{
+                    "function":word_on_indolence,
+                    "type":"transform_character_words",
+                    "prob":prob,
+                    "step":step
+                    },    
+
     "1887 Chateau Margaux":{
                     "function":mode_juan,
                     "type":"transform_character_modes",
