@@ -2,7 +2,7 @@ import re
 
 def excerpt_last_utterance(raw_dialogue_text):
     """
-    gets the last thing someone said, which must be surrounded by quotes
+    gets the last thing someone said, which must be surrounded by <>
     """
     utterances = re.findall(r'(?:\: \<)(.+)(?:\>$)',raw_dialogue_text,flags=re.M)
     return utterances[-1]
@@ -14,10 +14,15 @@ def simple_regex_heal(raw_dialogue_text):
   """
   if re.search(r'[.?!]',raw_dialogue_text)!=None: ## if has terminal punctuation somewhere
     ## "text1. text2\"" > "text 1.\""
-    return re.sub(r'(?<=[.?!])[^.?!]+ {0,}\>? {0,}$','>',raw_dialogue_text,count=1)
+    text = re.sub(r'(?<=[.?!])[^.?!]+ {0,}\>? {0,}$','>',raw_dialogue_text,count=1)
   else: 
     ## "text 1" > "text 1...\""
-    return re.sub(r' {0,}\>? {0,}?$','...>',raw_dialogue_text,count=1) ## ellipsis, possi
+    text = re.sub(r' {0,}\>? {0,}?$','...>',raw_dialogue_text,count=1) ## ellipsis
+  ## get rid of extra spaces
+  text = re.sub(r': < +',": <",text)
+  text = re.sub(r' +>$',">",text)
+  # text = re.sub(' \n+'," ",text) ## replacing \n already happens
+  return text
 
 def replace_last_instance(raw_dialogue_text,to_replace,replacement):
   """
@@ -49,13 +54,15 @@ def get_last_bit_of_text(raw_dialogue_text,n=3):
   n_from_last = last_n[0]
   return raw_dialogue_text[n_from_last:] 
 
-def remove_trailing_whitespace(raw_dialogue_text):
-  """
-  clean up trailing white space which can get added sometimes by gpt
-  """
-  return re.sub(r'\s+$','',raw_dialogue_text)
 
-def decomment_and_snip(raw_dialogue_text,n=2,clean_up=True):
+# def remove_trailing_whitespace(raw_dialogue_text):
+#   """
+#   clean up trailing white space which can get added sometimes by gpt
+#   """
+#   return re.sub(r'\s+$','',raw_dialogue_text)
+
+
+def decomment_and_snip(raw_dialogue_text,n=4,clean_up=True):
   """
   just a combination of get_last_bit_of_text and remove_comments
   """
@@ -76,10 +83,11 @@ Freud: <One possible reason art may seem boring to some, is that they are not at
 
 Simone Weil: <My question for you, Freud, is this: do you think that art can help us to understand and resolve the feelings of boredom or emptiness associated with the libido?>
 
-Freud: <Art can certainly help us to understand the feelings of boredom or emptiness associated with the libido. It may even help us to resolve them, but only if we are willing to engage in a process of self-examination and confront our own resistances.>
+Freud: <Art can certainly help us to understand the feelings of boredom or emptiness associated with the libido. It may even help us to resolve them, but only if we are willing to engage in a process of self-examination and confront our own resistances. Another thing>
 
   **Frantz Fanon took a sip of port.**
 
+Mr. Freud: <Test test test test>
 
   **Freud took a sip of sherry.**
 

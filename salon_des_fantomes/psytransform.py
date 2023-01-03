@@ -10,7 +10,6 @@ def transform(text, prompt,stop=">"):
 def transform_text(text,prompt,probability_of_transformation):
     if random.random()<probability_of_transformation:
         text = transform(text,prompt)
-        print('transforming')
         time.sleep(.3)
     return text
 

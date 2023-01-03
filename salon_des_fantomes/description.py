@@ -24,15 +24,12 @@ class DescriptionAdder:
                 text+="  *-------within normal range*\n"
             else:
                 for psy in char.psychotropics:
-                    #chem = self.drinks[psy]['chem']
                     chem = self.drinks[psy]['function']
                     permillion = int(self.drinks[psy]['prob'] * 10)
-                    chemline = "%s" % chem
-                    #chemline = "  *-------%s: %d parts per million*\n" % (chem,permillion)
-                    #chemline = re.findall(r'(?:<.+\/)([a-zA-Z_]+.py)(?:\'>)',chemline)[0]
-                    #chemline_full = "  *-------%s: %d parts per million*\n" % (chemline,permillion)
-                    text+=chemline_full
+                    chemline = "  *-------%s: %d ppm*\n" % (chem,permillion)
+                    text+=chemline
         return text
+
 
     def set_character_drinks(self):
         ## choose drink, maybe sticking with previous drink
@@ -44,7 +41,7 @@ class DescriptionAdder:
             else: 
                 if random.random()<char.curiosity: ## possibly change drink
                     char.beverage = random.choice(list(self.drinks))
-            print(char,char.beverage)
+
 
     def prepare_drink_statement(self,char,bev,psy=False,taste=None):
         text = "\n\n  **%s takes a sip of %s.**" % (char.name,bev)
@@ -58,37 +55,33 @@ class DescriptionAdder:
                                     "  **Immediate leftheadedness. Not entirely pleasant.**"])+"\n"
         self.prepared_text += text ### adds text
 
+
     def make_character_drink(self,char):
         bev = char.beverage
-        print(">>")
-        print(char,bev)
-        print("<<")
         if self.drinks[bev]!=None: ### if has psychotropic character
             ## add to dictionary
             if bev not in char.psychotropics: ## first sip, add to dictionary
                 char.psychotropics[bev] = copy(self.drinks[bev])
-            else: ## keep sipping
-                char.psychotropics[bev]["prob"]+=char.psychotropics[bev]["step"] ## increase by step
+                self.prepare_drink_statement(char,bev,psy=True)
             ## either use now or save for later
             if self.drinks[bev]["type"]=="transform_utterance":
                 self.prepare_drink_statement(char,bev,psy=True)
+                char.psychotropics[bev]["prob"]+=char.psychotropics[bev]["step"] ## increase by step
             elif self.drinks[bev]['type']=="transform_character_words":
                 char.words.append(self.drinks[bev]['function']())
-                input(char.words) ## debugging
             elif self.drinks[bev]['type']=="transform_character_modes":
                 char.modes.append(self.drinks[bev]['function']())
-                input(char.modes)
             elif self.drinks[bev]['type']=="transform_character_dispositions":
                 char.dispositions.append(self.drinks[bev]['function']())
-                input(char.dispositions)
-
         else:
             self.prepare_drink_statement(char,bev)
+
 
     def simple1(self,char):
         action = random.choice(['scratches','adjusts','idly taps','rubs'])
         body_part = random.choice(['wrist','skull','toe','index finger','chin','cheek','nose','left ass','right ass','lobes'])
         return "%s %s their %s." % (char,action,body_part)
+
 
     def simple2(self,char):
         action = random.choice(['adjusts','fondles','creases','brushes something off'])
@@ -98,6 +91,7 @@ class DescriptionAdder:
             garb =  random.choice(['chain','snood','wimple','cravat','khimar','cilice','carapace','rekel','alb','surcingle','antarvāsa','uttarāsaṅga'])
         return "%s %s their %s." % (char,action,garb)
 
+
     def simple3(self,char):
         if random.random()<.95:
             action = random.choice(['yawns','leans forward','blinks','leans back','rocks agitatedly','snorts','smiles'])
@@ -105,6 +99,7 @@ class DescriptionAdder:
             action = random.choice(['pulses','levitates up','levitates in','transmutates','beta-decays', 'colliderates','spalls','pionizes','urfshs','arcawints', 'eyo\'onts','yellowcakes out', 'map-merges', 'radixes', 'listens down'])
 
         return "%s %s." % (char,action)
+
 
     def simple_description(self,char):
         simplefunc = random.choice([

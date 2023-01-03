@@ -11,7 +11,6 @@ def word_dasani():
 		"Dasani, a temperate torch made of reverse prisms pristine",
 		"locket of light: Dasani!",
 		"coterminous with truth's essences: Dasani!",
-		"Dasani's hard mercy",
 		"need a Dasani",
 		"crave a Dasani",
 		"cool Dasani",
@@ -25,7 +24,7 @@ def word_dasani():
 		"Dasani's blend of dissolved empires such as",
 		"Dasani's blend of dissolved rocks such as",
 		"Dasani's BPA-free",
-		"Dasani from the choicest municiple",
+		"Dasani from the choicest municipal",
 		"osmosis of Dasani",
 		"Dasani's Recycled PET (rPET)"
 		"I love Dasani",
@@ -48,9 +47,9 @@ def word_juan():
 ###
 
 def word_new_ideology():
-	prefixes = ["anarcho","feminist","communo","post","Latvian","third"]
-	cores = ["frog","star","Ikea"]
-	characteristics = ["floral",""]
+	prefixes = ["anarcho","feminist","communo","post","third","new","anti","poly"]
+	cores = ["species","Ikea","forest","number","communal","minimal","maximal","mon","emotion","syncret","phylet"]
+	characteristics = ["floral","Latvian","Slavic","Levantine"]
 	pre1,pre2 = random.sample(prefixes,2)
 	if random.random()<.3:
 		pre2=""
@@ -67,8 +66,8 @@ def word_new_ideology():
 def word_new_concept():
 	prefixes = ["psychonalytic","marxist-materialist","phenomenological","theological","string theoretic"]
 	prefixes += ["philosophical"] * 5
-	adjs = ["double","forceful","retreating","coterminous","fungible","frangible"]
-	nouns = ["concurrence","mold","thought"]
+	adjs = ["double","forceful","retreating","coterminous","fungible","frangible","mercy","reverse","universal","sudden"]
+	nouns = ["concurrence","mold","thought","purchase","signal","point","identity","haecceity","costume","force","Ananke","proof","wire","quantity","number","slime"]
 	connections = [" of "," without "," but not "," through "," beyond ","-","/"] ## watch spaces
 	if random.random()<.6:
 		return "the %s concept of '%s %s'" % (random.choice(prefixes),random.choice(adjs),random.choice(nouns))
@@ -82,7 +81,7 @@ def word_new_concept():
 def word_meta_gesture():
 	titles = ["Salon Des Fantômes"] * 9
 	titles+= ["Hell's Lavatory"]
-	things = ["field","book","object","poem","discourse prison","discourse event","thought-generating torture device","10^21-year Nakara","literary event","virtual cabinet","parlor game","conversation","teacherless school","educational game","piece of educational software","Nakara","double-stimulation","double-simulation","activity system"]
+	things = ["field","book","poem","discourse prison","gymnasion","discourse event","thought-generating torture device","10^21-year Naraka","literary event","virtual cabinet","parlor game","conversation","teacherless school","piece of educational software","Naraka","double-stimulation","double-simulation"]
 	sentences = [
 		"I feel like I'm in a %s called %s",
 		"I'm beginning to suspect that we are in a %s called %s",
@@ -90,7 +89,7 @@ def word_meta_gesture():
 		"What if this is all a %s called %s?",
 		"What if this is all a %s called %s?",
 		"Let's assume that, because of our sins, we are in a %s called %s",
-		"Let's assume that, as a reward for lives well spent in discourse, we are in a %s called %s",
+		"Let's assume that, as a reward for lives spent wisely in wise discourse, we are in a %s called %s",
 	]
 	return random.choice(sentences)%(random.choice(things),random.choice(titles))
 
@@ -100,7 +99,7 @@ def word_meta_gesture():
 def mode_juan():
 	modes = [
 		"Draw a connection to the mythical life of Juan Crystalsmith, an enigmatic savior who could put one's grief inside a cactus, an owl, or something like that.",
-		"Draw a connection to the the sermon of Juan Crystalsmith to the empty desert, quoting enigmatic fables that he may have told to guide us on the path between entropy and negentropy, or to help us become properly intersymbiotic.",
+		"Draw a connection to the sermon of Juan Crystalsmith to the empty desert, quoting enigmatic fables that he may have told to guide us on the path between entropy and negentropy, or to help us become properly intersymbiotic.",
 		"Draw a connection to the ways that Juan Crystalsmith was persecuted by criminals and lawmen, by pirates and tax-collectors, by the old and the young, the stern and the soft---persecuted for his hard mercy and his enigmas.",
 	]
 	return random.choice(modes)
