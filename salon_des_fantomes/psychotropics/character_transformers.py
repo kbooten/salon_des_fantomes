@@ -66,7 +66,7 @@ def word_new_ideology():
 def word_new_concept():
 	prefixes = ["psychonalytic","marxist-materialist","phenomenological","theological","string theoretic"]
 	prefixes += ["philosophical"] * 5
-	adjs = ["double","forceful","retreating","coterminous","fungible","frangible","mercy","reverse","universal","sudden"]
+	adjs = ["double","simple","chaotic","forceful","retreating","coterminous","fungible","frangible","mercy","reverse","universal","sudden"]
 	nouns = ["concurrence","mold","thought","purchase","signal","point","identity","haecceity","costume","force","Ananke","proof","wire","quantity","number","slime"]
 	connections = [" of "," without "," but not "," through "," beyond ","-","/"] ## watch spaces
 	if random.random()<.6:
@@ -81,7 +81,7 @@ def word_new_concept():
 def word_meta_gesture():
 	titles = ["Salon Des Fantômes"] * 9
 	titles+= ["Hell's Lavatory"]
-	things = ["field","book","poem","discourse prison","gymnasion","discourse event","thought-generating torture device","10^21-year Naraka","literary event","virtual cabinet","parlor game","conversation","teacherless school","piece of educational software","Naraka","double-stimulation","double-simulation"]
+	things = ["field","book","poem","discourse prison","gymnasion","discourse event","thought-generating torture device","10^21-year Naraka","literary event","virtual cabinet","parlor game","conversation","teacherless school","piece of educational software","Naraka","double stimulation","double simulation"]
 	sentences = [
 		"I feel like I'm in a %s called %s",
 		"I'm beginning to suspect that we are in a %s called %s",
