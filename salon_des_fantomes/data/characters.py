@@ -211,7 +211,7 @@ characters = {
 		"chattiness":.3,
 		"curiosity":.1,
 		"agreeability":0.4,
-		"words": ["is poison","modern life","the problem with division","sovereignty","health","health","health","unlearning","reject","bodies corrupted","bioresponsive","my channel","YouTube","industrial society","learning to fight","rewilding","domestication sucks","violence","civilization os poison","sickness","nutrients","farming"],
+		"words": ["It's crazy how","is poison","modern life","the problem with division","sovereignty","health","health","health","unlearning","reject","bodies corrupted","bioresponsive","my channel","YouTube","industrial society","learning to fight","rewilding","domestication sucks","violence","civilization os poison","sickness","nutrients","farming"],
 		"dispositions":["funny","edgy","plucky","flirty"],
 		"style":"full of online lingo and the occasional Spanish word",
 		"modes":["explain her point both as an anime enjoyer and a anarcho-primitivist","refer to an anime","mention how she made her YouTube channel so popular","talk about homesteading"]
@@ -283,7 +283,7 @@ characters = {
 		"chattiness":.3,
 		"curiosity":.5,
 		"agreeability":0.2,
-		"words": ["if you will","I don't believe in","because history is just","is just a subcategory","though they seem different are equivalent concepts","there is no such thing","is an illusion","is false"],
+		"words": ["if you will","I don't believe in","Nobody is willing to admit","Only I have realized that","is just a subcategory","though they seem different are equivalent concepts","there is no such thing","is an illusion","is false"],
 		"dispositions":["intransigent"],
 		"style":"step by step but in style of a philosophical paper",
 		"modes":["offer an extremely heterodox, counter-intuitive epistemological or ontological theory that most scholars would find incredible or odd","invent a thought experiment"]
