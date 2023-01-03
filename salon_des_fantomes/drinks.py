@@ -2,12 +2,12 @@ from psychotropics.utterance_transformers import transformation_odd_parenthetica
 from psychotropics.character_transformers import *
 
 
-# prob = 0.1
-# step = 0.03
+prob = 0.1
+step = 0.03
 
 
-prob = 0.9
-step = 0.1
+# prob = 0.9
+# step = 0.1
 input("drinks -> prob:%s, step:%s (ENTER to continue)" % (prob,step))
 
 drinks2psycho = {

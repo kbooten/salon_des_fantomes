@@ -59,13 +59,12 @@ class DescriptionAdder:
     def make_character_drink(self,char):
         bev = char.beverage
         if self.drinks[bev]!=None: ### if has psychotropic character
+            self.prepare_drink_statement(char,bev,psy=True)
             ## add to dictionary
             if bev not in char.psychotropics: ## first sip, add to dictionary
                 char.psychotropics[bev] = copy(self.drinks[bev])
-                self.prepare_drink_statement(char,bev,psy=True)
             ## either use now or save for later
             if self.drinks[bev]["type"]=="transform_utterance":
-                self.prepare_drink_statement(char,bev,psy=True)
                 char.psychotropics[bev]["prob"]+=char.psychotropics[bev]["step"] ## increase by step
             elif self.drinks[bev]['type']=="transform_character_words":
                 char.words.append(self.drinks[bev]['function']())
@@ -132,4 +131,3 @@ def main():
 
 if __name__ == '__main__':
   main()
-

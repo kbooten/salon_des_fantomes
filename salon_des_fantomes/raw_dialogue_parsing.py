@@ -62,7 +62,7 @@ def get_last_bit_of_text(raw_dialogue_text,n=3):
 #   return re.sub(r'\s+$','',raw_dialogue_text)
 
 
-def decomment_and_snip(raw_dialogue_text,n=4,clean_up=True):
+def decomment_and_snip(raw_dialogue_text,n=5,clean_up=True):
   """
   just a combination of get_last_bit_of_text and remove_comments
   """

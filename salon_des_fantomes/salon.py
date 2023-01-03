@@ -40,7 +40,7 @@ class Salon:
     self.create_drink_file() 
     self.current_drinks = []
 
-  def create_drink_file(self,limit=False):
+  def create_drink_file(self,limit=True):
     """
     by default psychotropic drinks are disabled
     """

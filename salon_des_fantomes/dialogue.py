@@ -37,8 +37,9 @@ class Dialogue:
         self.player = [c for c in characters if c.is_player][0]
         self.skipping_player=False
         self.since_player_spoke = 0
-        self.meta = "Write what <THINKER> would say next.  <THINKER> is <LONGNAME>.  <MIN> words minimum, <MAX> words maximum of thoughtful, well-reasoned, detailed and information-filled argument. Even if the topic of the conversation is odd or silly, <THINKER> must take it seriously and must not object to or evade the topic of conversation or disagree with the premise.  <THINKER> must not try to change subjects or offer a wishy-washy answer (like 'well, it depends').  What <THINKER> says next should use a <DISPOSITION> tone and should feature <STYLE> and a strong, intense, weird, and interesting opinion that a normal person is not likely to have. End with punctuation and then the > symbol."
+        self.meta = "Write what <THINKER> would say next.  <THINKER> is <LONGNAME>.  <MIN> words minimum, <MAX> words maximum of thoughtful, well-reasoned, detailed and information-filled argument. What <THINKER> says next should build on what what <THINKER> has said previously in the conversation and should not contradict what <THINKER> has said previously. Even if the topic of the conversation is odd or silly, <THINKER> must take it seriously and must not object to or evade the topic of conversation or disagree with the premise.  <THINKER> must not give a wishy-washy answer (like 'well, it depends' or 'sometimes yes, sometimes know'); if asked to choose between something or imagine something, <THINKER> must make a bold choice.  What <THINKER> says next should use a <DISPOSITION> tone and should feature <STYLE> and a strong, intense, weird, and interesting opinion that a normal person is not likely to have. End with punctuation and then the > symbol."
         self.player_spoken_enough = False
+        self.desired_char_length_for_player_input = 500 ## must be at least one player input of this many characters
 
     def _get_start_char(self):
         try:
@@ -435,9 +436,9 @@ This question should <RHETGOAL>.  50 to 100 words.
                 specific_question = self.get_specific_question_for_player()
                 self.current_text+=specific_question
                 print(colored(specific_question,"blue"))
-                while len(player_text)<100:
+                while len(player_text)<self.desired_char_length_for_player_input:
                     player_text = input("{🛑}>")
-                    if len(player_text)<100:
+                    if len(player_text)<self.desired_char_length_for_player_input:
                         print("(response not long enough; add more characters)")
             else: ### non mandatory
                 player_text = input("{🔶}>")
@@ -445,7 +446,7 @@ This question should <RHETGOAL>.  50 to 100 words.
                 self.skipping_player = True
                 self.since_player_spoke+=1
             else:
-                if len(player_text)>100: ## mandatory n character response
+                if len(player_text)>self.desired_char_length_for_player_input: ## mandatory n character response
                     self.player_spoken_enough = True
                 self.since_player_spoke=0 ## reset
                 player_text = player_text.rstrip(" \n")

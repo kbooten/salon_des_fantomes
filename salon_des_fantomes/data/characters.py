@@ -214,7 +214,7 @@ characters = {
 		"words": ["is poison","modern life","the problem with division","sovereignty","health","health","health","unlearning","reject","bodies corrupted","bioresponsive","my channel","YouTube","industrial society","learning to fight","rewilding","domestication sucks","violence","civilization os poison","sickness","nutrients","farming"],
 		"dispositions":["funny","edgy","plucky","flirty"],
 		"style":"full of online lingo and the occasional Spanish word",
-		"modes":["explain her point both as an anime enjoyer and a anarchi-primitivist","refer to an anime","mention how she made her YouTube channel so popular","talk about homesteading"]
+		"modes":["explain her point both as an anime enjoyer and a anarcho-primitivist","refer to an anime","mention how she made her YouTube channel so popular","talk about homesteading"]
 	},
 
 	"Wutton Jeffson" :{
@@ -290,7 +290,7 @@ characters = {
 	},
 
 	"Gioialléz" :{
-		"longname":"a good-natured, funny professor of European literature originally from Austria, a European intellectual chauvinist, and always eager to reference a extremely obscure book; crypto-conservative, but not that good at hiding it",
+		"longname":"a good-natured, funny professor of European literature originally from Austria, a European intellectual chauvinist, and always eager to reference an extremely obscure book; crypto-conservative, but not that good at hiding it",
 		#"quotes":"shade12.txt",	
 		"chattiness":.3,
 		"curiosity":.7,
