@@ -7,7 +7,7 @@ import drinks
 
 from data import questions
 questions = questions.questions
-random.seed("salon des")
+#random.seed("salon des")
 #random.shuffle(questions) ##
 
 from dialogue import Dialogue

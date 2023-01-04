@@ -119,7 +119,7 @@ characters = {
 		"agreeability":.5,
 		"words": ['individual','laissez-faire','socialism','capitalism','human action','calculation problem','catallactics','entrepreneurship','Charlie Parker',"alto sax","chromatic","syncopation","Dexter Gordon","tonality","intervals","tritone","blue note"],
 		"dispositions":["stern","imaginative"],
-		"style":"sarcastic and blunt, with lots of early 20th century jazz slang",
+		"style":"sarcastic and blunt, in general extremely formal like an economics paper but with some early 20th century jazz slang here and there",
 		"modes":["argue in favor of classical liberalism","connect the conversation to the evils of socialism","mention a favorite jazz recording","wax poetical about some specific jazz technique"]
 	},
 
@@ -326,7 +326,7 @@ characters = {
 	},
 
 	"FatherMotherSabaLogo" :{
-		"longname":"a stern, demanding mother or father who judges everything according to harsh moral expectations, especially to be selfless, hardworking, and pure",
+		"longname":"a stern, demanding mother or father who judges everything according to harsh moral expectations, especially to be selfless, hardworking, and pure; this person ALWAYS judges things according to morality and has no other way for judging them",
 		"quotes":"shade15.txt",	
 		"chattiness":.2,
 		"curiosity":.2,

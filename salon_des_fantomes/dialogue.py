@@ -37,7 +37,7 @@ class Dialogue:
         self.player = [c for c in characters if c.is_player][0]
         self.skipping_player=False
         self.since_player_spoke = 0
-        self.meta = "Write what <THINKER> would say in reply to what <PREVIOUS_THINKER> has said.  <THINKER> is <LONGNAME>.  <MIN> words minimum, <MAX> words maximum of thoughtful, well-reasoned, detailed and information-filled argument. What <THINKER> says next should build on what <PREVIOUS_THINKER> has just said, and it should should not contradict what <THINKER> has said previously. Even if the topic of the conversation is odd or silly, <THINKER> must take it seriously and must not object to or evade the topic of conversation or disagree with the premise.  <THINKER>'s next utterance must not give a wishy-washy answer (like 'well, it depends' or 'sometimes yes, sometimes no' or 'both have their merits'---or any other wishy-washy, moderate opinion); if asked to choose between something or imagine something, <THINKER> must make a bold choice.  <THINKER> must say something EXTREME, not something moderate. What <THINKER> says next should use a <DISPOSITION> tone and should feature <STYLE> and a strong, intense, weird, and interesting opinion that a normal person is not likely to have. End with punctuation and then the > symbol."
+        self.meta = "Write what <THINKER> would say in reply to what <PREVIOUS_THINKER> has said.  <THINKER> is <LONGNAME>.  <MIN> words minimum, <MAX> words maximum of argument that is well-reasoned, detailed, information-filled, and drawn to extreme positions. What <THINKER> says next should build on what <PREVIOUS_THINKER> has just said, and it should should not contradict what <THINKER> has said previously. Even if the topic of the conversation is odd or silly, <THINKER> must take it seriously and must not object to or evade the topic of conversation or disagree with the premise.  <THINKER>'s next utterance must not give a wishy-washy answer (like 'well, it depends' or 'sometimes yes, sometimes no' or 'both have their merits'---or any other wishy-washy, moderate opinion); if asked to choose between something or imagine something, <THINKER> must make a bold choice between the options (NOT say that both have their virtues).  <THINKER> must say something EXTREME, not something moderate or balanced. What <THINKER> says next should use a <DISPOSITION> tone and should feature <STYLE> and a strong, intense, weird, and interesting opinion that a normal person is not likely to have. End with punctuation and then the > symbol."
         self.player_spoken_enough = False
         self.desired_char_length_for_player_input = 400 ## must be at least one player input of this many characters
         self.kill_dialogue=False
@@ -71,24 +71,43 @@ class Dialogue:
         """
         go back and forth between bots and player
         """
-        if self.direct_question_asked==True:
-            if random.random()<.7: ## usually return to previous person
-                self.current_thinker,self.previous_thinker = self.previous_thinker,self.current_thinker #swap
-            else:
-                thinkers_available = [k for k in self.all_characters if k!=self.current_thinker]
-                thinker = random.choice(thinkers_available)
-                self.previous_thinker = self.current_thinker
-                self.current_thinker = thinker
-        elif self.current_thinker.is_player==False: ## switch to human:
+        print(self.previous_thinker,self.current_thinker)
+        if self.previous_thinker==None:
             self.current_thinker,self.previous_thinker = self.player,self.current_thinker
-        else:
+        elif self.current_thinker.is_player==False: ## if current thinker is not human
+            ## if a bot has asked a bot a question
+            if self.previous_thinker.is_player==False and self.direct_question_asked == True:
+                if random.random()<.7: ## usually return to previous person
+                    self.current_thinker,self.previous_thinker = self.previous_thinker,self.current_thinker #swap
+                else:
+                    thinkers_available = [k for k in self.all_characters if k!=self.current_thinker] ## pick a new person, possibly even player
+                    thinker = random.choice(thinkers_available)
+                    self.previous_thinker = self.current_thinker
+                    self.current_thinker = thinker
+                #self.current_thinker,self.previous_thinker = self.previous_thinker,self.current_thinker #swap
+                #self.direct_question_asked=False ## reset
+            ## otherwise human gets a turn
+            else:
+                self.current_thinker,self.previous_thinker = self.player,self.current_thinker
+        else: ### current thinker is player, switch back to bot (or skip player)
+            ### if player didn't input text and must be skipped by replacing the current thinker
             if self.skipping_player==True: ## set only current thinker to new bot
                 thinkers_available = [k for k in self.all_characters if (k!=self.current_thinker and k!=self.previous_thinker)]
                 thinker = random.choice(thinkers_available)
                 self.current_thinker = thinker
                 self.skipping_player=False # reset
+            ### if player asked a direct question of bot
+            elif self.direct_question_asked==True:
+                #self.direct_question_asked = False ## reset
+                if random.random()<.8: ## usually return to previous person
+                    self.current_thinker,self.previous_thinker = self.previous_thinker,self.current_thinker #swap
+                else:
+                    thinkers_available = [k for k in self.all_characters if k!=self.current_thinker]
+                    thinker = random.choice(thinkers_available)
+                    self.previous_thinker = self.current_thinker
+                    self.current_thinker = thinker
             else:
-                if random.random()<.4:
+                if random.random()<.3:
                     ## sometimes return to the previous person to create continuity
                     self.current_thinker,self.previous_thinker = self.previous_thinker,self.current_thinker
                 else: ## randomly choose next person
@@ -96,6 +115,7 @@ class Dialogue:
                     thinker = random.choice(thinkers_available)
                     self.previous_thinker = self.current_thinker
                     self.current_thinker = thinker
+        print(self.previous_thinker,self.current_thinker)
 
 
     def _refer_to_keyword_secret_prompt(self):
@@ -142,11 +162,11 @@ class Dialogue:
         bring the conversation back to the question
         """
         print(colored('BACK',"grey"))
-        prefix = ""
+        prefix = random.choice(["","","","To return"])
         prompt_text = """
 
 <META>
-What <THINKER> says next should connect the conversation back to the central question which began it: <QUESTION>
+What <THINKER> says next should connect the what <PREVIOUS_THINKER> has just said back to the central question which began the conversation: <QUESTION>
 
 <THINKER>: <<PREFIX>"""
         if random.random()<self.current_thinker.chattiness:
@@ -357,6 +377,7 @@ This question should <RHETGOAL>.  50 to 100 words.
 
         """
         if self.direct_question_asked==True: ## if a question has been asked
+            print("ANSWERING DIRECT QUESTION")
             self.direct_question_asked=False ## switch off this need so don't keep asking questions
             next_utterance = self._prompt2text(self._refer_to_keyword_secret_prompt()) ## standard response will do for response to questions
         else:
@@ -373,11 +394,11 @@ This question should <RHETGOAL>.  50 to 100 words.
                 next_utterance = self._prompt2text(self._agree_secret_prompt())
             elif (random.random()<.12 and self.current_thinker.ideas!=None): ## IDEA, some may not have them
                 next_utterance = self._prompt2text(self._refer_to_quote_or_idea_secret_prompt())
-            elif random.random()<.3:
+            elif random.random()<.4:
                 next_utterance = self._prompt2text(self._mode_secret_prompt()) ## MODE
-            elif random.random()<.2:
+            elif random.random()<.3:
                 next_utterance = self._prompt2text(self._consider_art_secret_prompt()) ## ART
-            elif random.random()<.25:
+            elif random.random()<.23:
                 next_utterance = self._prompt2text(self._refer_back_to_question_secret_prompt()) ## REFER BACK
             else: ## how likely to just go with standard prompt
                 next_utterance = self._prompt2text(self._refer_to_keyword_secret_prompt())
@@ -427,6 +448,7 @@ This question should <RHETGOAL>.  50 to 100 words.
         this handles both human and bot turns
         """
         player_text = ""
+        ## if current_thinker is player
         if (self.current_thinker.is_player==True):
             print(colored(self.current_text,"blue"))
             if self.since_player_spoke>2 and random.random()<.4: ## mandatory
@@ -439,13 +461,14 @@ This question should <RHETGOAL>.  50 to 100 words.
                         print("(response not long enough; add more characters)")
             else: ### non mandatory
                 player_text = input("{🔶}>")
-            if player_text.lower()=="kill": ## escape hatch
+            if player_text.lower()=="kill": ## escape hatch; quit dialogue (soon)
                 player_text = ""
                 self.kill_dialogue=True
-            if player_text=="":
+            if player_text=="": ##### < set variable to skip
                 self.skipping_player = True
                 self.since_player_spoke+=1
-            else:
+            else: ## if actual input from player
+                self.direct_question_asked = False ## reset this in case a question was asked
                 if len(player_text)>self.desired_char_length_for_player_input: ## mandatory n character response
                     self.player_spoken_enough = True
                 self.since_player_spoke=0 ## reset
@@ -453,6 +476,9 @@ This question should <RHETGOAL>.  50 to 100 words.
                 self.current_text+='\n\n%s: <%s>' % (self.current_thinker.name,player_text)
                 if "?" in player_text:
                     self.direct_question_asked=True
+                    print("SETTING DIRECT QUESTION")
+                elif self.direct_question_asked==True:
+                    self.direct_question_asked=False
                 self.since_player_spoke = 0 ## reset counter
         else:
             self._generate_next_text()
