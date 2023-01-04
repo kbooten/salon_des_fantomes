@@ -7,7 +7,7 @@ import drinks
 
 from data import questions
 questions = questions.questions
-random.seed("salon")
+random.seed("salon des")
 #random.shuffle(questions) ##
 
 from dialogue import Dialogue
@@ -32,7 +32,7 @@ class Salon:
     self.all_drinks = drinks
     self.min_people = 4
     self.max_people = 7#len(self.characters)
-    self.number_of_dialogue_turns = 10
+    self.number_of_dialogue_turns = 25
     ## saving output
     self.file_prefix = "output/output"
     self.output_file = self.get_file_name()
@@ -122,10 +122,8 @@ class Salon:
     current_dialogue = Dialogue(subset_of_characters,next_question,description_adder)
     n = input("How many dialogue turns? (enter a number, or leave empty for default--%d)" % self.number_of_dialogue_turns)
     if n!="":
-      try:
-        self.number_of_dialogue_turns = int(n)
-      except:
-        pass
+      self.number_of_dialogue_turns = int(n)
+      print("Changing to %s turns." % self.number_of_dialogue_turns)
     current_dialogue.generate(n=self.number_of_dialogue_turns)
     print(current_dialogue.current_text)
     self.write_output("CHAPTER n\n"+current_dialogue.current_text+"\n\n\n")

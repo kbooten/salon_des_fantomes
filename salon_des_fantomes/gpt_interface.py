@@ -20,7 +20,7 @@ def possibly_emergency_cut_prompt(prompt,max_tokens,total_max=3800):
     return prompt
 
 
-def gpt3_from_prompt(prompt,temperature=0.7,max_tokens=500,presence_penalty=0,frequency_penalty=0,model="text-davinci-003",stop=">"):
+def gpt3_from_prompt(prompt,temperature=0.7,max_tokens=550,presence_penalty=0,frequency_penalty=0,model="text-davinci-003",stop=">"):
     prompt = possibly_emergency_cut_prompt(prompt,max_tokens)
     openai_json = openai.Completion.create(model=model, prompt=prompt, 
                                 temperature=temperature, 

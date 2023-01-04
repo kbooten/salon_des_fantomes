@@ -37,9 +37,10 @@ class Dialogue:
         self.player = [c for c in characters if c.is_player][0]
         self.skipping_player=False
         self.since_player_spoke = 0
-        self.meta = "Write what <THINKER> would say next.  <THINKER> is <LONGNAME>.  <MIN> words minimum, <MAX> words maximum of thoughtful, well-reasoned, detailed and information-filled argument. What <THINKER> says next should build on what what <THINKER> has said previously in the conversation and should not contradict what <THINKER> has said previously. Even if the topic of the conversation is odd or silly, <THINKER> must take it seriously and must not object to or evade the topic of conversation or disagree with the premise.  <THINKER> must not give a wishy-washy answer (like 'well, it depends' or 'sometimes yes, sometimes know'); if asked to choose between something or imagine something, <THINKER> must make a bold choice.  What <THINKER> says next should use a <DISPOSITION> tone and should feature <STYLE> and a strong, intense, weird, and interesting opinion that a normal person is not likely to have. End with punctuation and then the > symbol."
+        self.meta = "Write what <THINKER> would say in reply to what <PREVIOUS_THINKER> has said.  <THINKER> is <LONGNAME>.  <MIN> words minimum, <MAX> words maximum of thoughtful, well-reasoned, detailed and information-filled argument. What <THINKER> says next should build on what <PREVIOUS_THINKER> has just said, and it should should not contradict what <THINKER> has said previously. Even if the topic of the conversation is odd or silly, <THINKER> must take it seriously and must not object to or evade the topic of conversation or disagree with the premise.  <THINKER>'s next utterance must not give a wishy-washy answer (like 'well, it depends' or 'sometimes yes, sometimes no' or 'both have their merits'---or any other wishy-washy, moderate opinion); if asked to choose between something or imagine something, <THINKER> must make a bold choice.  <THINKER> must say something EXTREME, not something moderate. What <THINKER> says next should use a <DISPOSITION> tone and should feature <STYLE> and a strong, intense, weird, and interesting opinion that a normal person is not likely to have. End with punctuation and then the > symbol."
         self.player_spoken_enough = False
-        self.desired_char_length_for_player_input = 500 ## must be at least one player input of this many characters
+        self.desired_char_length_for_player_input = 400 ## must be at least one player input of this many characters
+        self.kill_dialogue=False
 
     def _get_start_char(self):
         try:
@@ -111,18 +112,14 @@ class Dialogue:
 <THINKER>: <<PREFIX>"""
         if random.random()<.12:
             keyword_command = "" ## no keyword actually...
+            min,max = 70,200
         elif random.random()<.9:
             keyword_command = 'Use the word or phrase "<KEYWORD1>".'
+            min,max = 150,400
         else:
             keyword_command = 'Use the word or phrase "<KEYWORD1>" and the word or phrase "<KEYWORD2>".'
+            min,max = 350,500
         prompt_text = prompt_text.replace("<KEYWORD_COMMAND>",keyword_command)
-        if random.random()<self.current_thinker.chattiness:
-            if random.random()<.3: 
-                min,max = 250,500
-            else:
-                min,max = 150,250
-        else:
-            min,max = 40,150
         kw1,kw2 = self.current_thinker.get_unique_key_words(2)
         prompt_text = prompt_text.replace("<META>",self.meta)
         prompt_text = prompt_text.replace("<MIN>",str(min))
@@ -374,13 +371,13 @@ This question should <RHETGOAL>.  50 to 100 words.
                     next_utterance = self._prompt2text(self._ask_question_secret_prompt())
             elif (random.random()<.5 and random.random()<self.current_thinker.agreeability): ## AGREE, agree sometimes
                 next_utterance = self._prompt2text(self._agree_secret_prompt())
-            elif (random.random()<.1 and self.current_thinker.ideas!=None): ## IDEA, some may not have them
+            elif (random.random()<.12 and self.current_thinker.ideas!=None): ## IDEA, some may not have them
                 next_utterance = self._prompt2text(self._refer_to_quote_or_idea_secret_prompt())
             elif random.random()<.3:
                 next_utterance = self._prompt2text(self._mode_secret_prompt()) ## MODE
             elif random.random()<.2:
                 next_utterance = self._prompt2text(self._consider_art_secret_prompt()) ## ART
-            elif random.random()<.4:
+            elif random.random()<.25:
                 next_utterance = self._prompt2text(self._refer_back_to_question_secret_prompt()) ## REFER BACK
             else: ## how likely to just go with standard prompt
                 next_utterance = self._prompt2text(self._refer_to_keyword_secret_prompt())
@@ -442,6 +439,9 @@ This question should <RHETGOAL>.  50 to 100 words.
                         print("(response not long enough; add more characters)")
             else: ### non mandatory
                 player_text = input("{🔶}>")
+            if player_text.lower()=="kill": ## escape hatch
+                player_text = ""
+                self.kill_dialogue=True
             if player_text=="":
                 self.skipping_player = True
                 self.since_player_spoke+=1
@@ -488,11 +488,15 @@ This question should <RHETGOAL>.  50 to 100 words.
     def generate(self,n=10,toxicology_needed=True):
         for i in range(n):
             self.next()
+            print("\nroughly %s words" % len(self.current_text.split()))
+            if self.kill_dialogue==True:
+                break
         ## wrapping up
+        input("wrapping up")
         while (self.direct_question_asked==True or self.player_spoken_enough==False): ## don't end with question or until player has spoken enough
             self.next()
         if toxicology_needed==True:
             self.add_toxicology_report()
-        print(colored(self.current_text,"green"))
+        print(colored(self.current_text,"blue"))
         print("")
 
