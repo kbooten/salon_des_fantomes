@@ -6,12 +6,14 @@ I completed the code for this project mostly in the fall of 2022, with a bit of 
 
 My code is essentially a very complex and even arcane wrapper for GPT-3.5 (the OpenAI model that was available at the time).  This wrapper contains and does a variety of things.  
 
+
 ## What the code contains:
 
 * a set of "characters" (e.g., a monosyllabic mountain, a Latvian architect), with various dispositions, favorite words and phrases, and interests
 * a set of topics of conversations
 * a set of paintings and artworks that characters may stumble/remark upon
 * a set of psychotropic spells that transform the character or the character's speech in some way
+
 
 ## What the code does:
 
@@ -22,6 +24,7 @@ My code is essentially a very complex and even arcane wrapper for GPT-3.5 (the O
 	- allowing me, the human, to interrupt and speak when I so choose 
 	- generating via simple aleatoric means basic contextual information (e.g., about when a character has had a sip of their drink)
 	- keep track of the state of the character's blood and how many parts-per-million of various psychotropic substances it contains (see below)
+
 
 ## Weird Stuff
 
