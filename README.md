@@ -20,7 +20,7 @@ My code is essentially a very complex and even arcane wrapper for GPT-3.5 (the O
 	- cobbling together prompts that contain limited conversational context (the past `n` words) as well as "secret" information (information that did not end up in the book's text, such as the character's attributes that would define its utterances)
 	- parsing the response from the LLM and including it into the text
 	- allowing me, the human, to interrupt and speak when I so choose 
-	- generating via simple aleatoric means basic contextual information (e.g., about when a character has had a sip of their drink or scratched themselves)
+	- generating via simple aleatoric means basic contextual information (e.g., about when a character has had a sip of their drink)
 	- keep track of the state of the character's blood and how many parts-per-million of various psychotropic substances it contains (see below)
 
 ## Weird Stuff
