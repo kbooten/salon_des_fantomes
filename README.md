@@ -30,7 +30,7 @@ My code is essentially a very complex and even arcane wrapper for GPT-3.5 (the O
 
 ### Random Word Trick
 
-To combat the tendency of LLMs to be extremely boring, I employed what I call the "random word trick."  At each utterance, the character whose turn it was to speak was instructed to respond using a randomly selected word from one of a hand-composed list of favorite words.  
+To combat the tendency of LLMs to be extremely boring, I employed what I call the "random word trick."  At each utterance, the character whose turn it was to speak was instructed to respond using a randomly selected word from a list of favorite words chosen by me for that character.  
 
 ### Psychotropic Drinks
 
